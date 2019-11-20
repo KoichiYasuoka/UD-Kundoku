@@ -11,7 +11,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 >>> lzh=udkanbun.load()
 >>> s=lzh("未有義而後其君者也")
 >>> import udkundoku
->>> t=udkundoku.lzh2ja(s)
+>>> t=udkundoku.translate(s)
 >>> print(t)
 ```
 

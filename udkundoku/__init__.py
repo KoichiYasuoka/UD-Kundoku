@@ -1,4 +1,4 @@
-from .udkundoku import lzh2ja
+from .udkundoku import translate
 
-__all__=[ lzh2ja ]
+__all__=[ translate ]
 
