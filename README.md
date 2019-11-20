@@ -9,7 +9,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 ```py
 >>> import udkanbun
 >>> lzh=udkanbun.load()
->>> s=lzh("不入虎穴不得虎子")
+>>> s=lzh("未有義而後其君者也")
 >>> import udkundoku
 >>> t=udkundoku.lzh2ja(s)
 >>> print(t)
