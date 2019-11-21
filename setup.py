@@ -1,3 +1,6 @@
+#! /usr/bin/python -i
+# coding=utf-8
+
 import setuptools
 from setuptools.command.install import install
 
@@ -17,7 +20,7 @@ class qkanaPostInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.0.8",
+  version="0.1.0",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
