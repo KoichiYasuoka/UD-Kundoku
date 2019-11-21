@@ -118,7 +118,7 @@ def translate(kanbun):
     for j,t in enumerate(s):
       w[j].head=w[s.index(t.head)]
     d[i]=w
-# の
+# の SCONJ,nmod,det
   for s in d:
     for i in reversed(range(len(s))):
       if s[i].form=="之" and s[i].upos=="SCONJ":
@@ -130,7 +130,7 @@ def translate(kanbun):
           s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
           continue
-        x=[k for k in range(i+1,j) if s[k].form=="の" or s[k].deprel=="root"]
+        x=[k for k in range(i+1,j) if s[k].id==0 or s[k].deprel=="root"]
         if x!=[]:
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
@@ -139,7 +139,25 @@ def translate(kanbun):
         j=len([k for k in x if k==i])
         s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
         s[j].head=s[i]
-# Universal Dependencies化
+# は,が nsubj,csubj
+  for s in d:
+    for i in range(len(s)):
+      if s[i].deprel.startswith("nsubj") or s[i].deprel.startswith("csubj"):
+        j=s.index(s[i].head)
+        k=s[j].deprel
+        w="が" if k=="ccomp" or k=="advcl" or k.startswith("csubj") else "は"
+        if j-i==1:
+          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
+          continue
+        x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
+        while set(x)!={i,j}:
+          x=[k if k==i or k==j else x[k] for k in x]
+        j=len([k for k in x if k==i])
+        if s[j-1].id!=0:
+          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
+# UD化
   kundoku=""
   for s in d:
     for i in range(len(s)):
