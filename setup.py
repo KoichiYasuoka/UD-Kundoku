@@ -10,13 +10,14 @@ class qkanaPostInstall(install):
     import atexit
     def qkana_install():
       import unidic2ud
-      print(unidic2ud.dictlist())
+      if unidic2ud.dictlist().find("qkana\n")<0:
+        unidic2ud.download("qkana","unidic")
     atexit.register(qkana_install)
     install.run(self)
 
 setuptools.setup(
   name="udkundoku",
-  version="0.0.7",
+  version="0.0.8",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
