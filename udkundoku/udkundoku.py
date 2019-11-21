@@ -3,7 +3,7 @@
 
 import unidic2ud
 if unidic2ud.dictlist().find("qkana\n")<0:
-  unidic2ud.download("qkana","udpipe")
+  unidic2ud.download("qkana","unidic")
 QKANA=unidic2ud.UniDic2UD("qkana",None)
 
 class UDKundokuToken(object):
@@ -20,6 +20,10 @@ class UDKundokuToken(object):
   def __repr__(self):
     r="\t".join([str(self.id),self.form,self.lemma,self.upos,self.xpos,self.feats,str(0 if self.head is self else self.head.id),self.deprel,self.deps,self.misc])
     return r if type(r) is str else r.encode("utf-8")
+
+def load(MeCab=True):
+  import udkanbun
+  return udkanbun.load(MeCab)
 
 def translate(kanbun):
   import udkanbun.kaeriten
