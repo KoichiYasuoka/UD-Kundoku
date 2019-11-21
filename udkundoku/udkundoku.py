@@ -3,75 +3,8 @@
 
 import unidic2ud
 if unidic2ud.dictlist().find("qkana\n")<0:
-  raise OSError("qkana for unidic2ud not found")
+  unidic2ud.download("qkana","udpipe")
 QKANA=unidic2ud.load("qkana")
-
-import udkanbun
-
-class UDKundokuEntry(udkanbun.UDPipeEntry):
-  def to_tree(self,BoxDrawingWidth=1):
-    if not hasattr(self,"_tokens"):
-      return None
-    f=[[] for i in range(len(self))]
-    h=[0]
-    for i in range(1,len(self)):
-      if self[i].deprel=="root":
-        h.append(0)
-        continue
-      j=i+self[i].head.id-self[i].id
-      f[j].append(i)
-      h.append(j) 
-    d=[1 if f[i]==[] and abs(h[i]-i)==1 else -1 if h[i]==0 else 0 for i in range(len(self))]
-    while 0 in d:
-      for i,e in enumerate(d):
-        if e!=0:
-          continue
-        g=[d[j] for j in f[i]]
-        if 0 in g:
-          continue
-        k=h[i]
-        if 0 in [d[j] for j in range(min(i,k)+1,max(i,k))]:
-          continue
-        for j in range(min(i,k)+1,max(i,k)):
-          if j in f[i]:
-            continue
-          g.append(d[j]-1 if j in f[k] else d[j])
-        g.append(0)
-        d[i]=max(g)+1
-    m=max(d)
-    p=[[0]*(m*2) for i in range(len(self))]
-    for i in range(1,len(self)):
-      k=h[i]
-      if k==0:
-        continue
-      j=d[i]*2-1
-      p[min(i,k)][j]|=9
-      p[max(i,k)][j]|=5
-      for l in range(j):
-        p[k][l]|=3
-      for l in range(min(i,k)+1,max(i,k)):
-        p[l][j]|=12
-    u=[" ","\u2574","\u2576","\u2500","\u2575","\u2518","\u2514","\u2534","\u2577","\u2510","\u250C","\u252C","\u2502","\u2524","\u251C","\u253C","<"]
-    v=[t.form for t in self]
-    l=[]
-    for w in v:
-      l.append(len(w)+len([c for c in w if ord(c)>127]))
-    m=max(l)
-    s=""
-    for i in range(1,len(self)):
-      if h[i]>0:
-        j=d[i]*2-2
-        while j>=0:
-          if p[i][j]>0:
-            break
-          p[i][j]|=3
-          j-=1
-        p[i][j+1]=16
-      t="".join(u[j] for j in p[i])
-      if BoxDrawingWidth>1:
-        t=t.replace(" "," "*BoxDrawingWidth).replace("<"," "*(BoxDrawingWidth-1)+"<")
-      s+=" "*(m-l[i])+v[i]+" "+t+" "+self[i].deprel+"\n"
-    return s
 
 class UDKundokuToken(object):
   def __init__(self,id,form,lemma,upos,xpos,feats,deprel,deps,misc):
@@ -168,5 +101,5 @@ def translate(kanbun):
     for i in range(len(s)):
       s[i].id=i+1
     kundoku+="# text = "+"".join(t.form for t in s if t.form!="_")+"\n"+"\n".join(str(t) for t in s)+"\n\n"
-  return UDKundokuEntry(kundoku)
+  return unidic2ud.UniDic2UDEntry(kundoku)
 
