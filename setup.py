@@ -4,7 +4,7 @@
 import setuptools
 from setuptools.command.install import install
 
-with open("README.md","r") as r:
+with open("README.md","r",encoding="UTF-8") as r:
   long_description=r.read()
 URL="https://github.com/KoichiYasuoka/UD-Kundoku"
 
@@ -20,7 +20,7 @@ class qkanaPostInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.1.0",
+  version="0.1.1",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
