@@ -4,7 +4,7 @@
 import unidic2ud
 if unidic2ud.dictlist().find("qkana\n")<0:
   unidic2ud.download("qkana","udpipe")
-QKANA=unidic2ud.load("qkana")
+QKANA=unidic2ud.UniDic2UD("qkana",None)
 
 class UDKundokuToken(object):
   def __init__(self,id,form,lemma,upos,xpos,feats,deprel,deps,misc):
@@ -77,9 +77,9 @@ def translate(kanbun):
         j=len([k for k in x if k==i])
         s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
         s[j].head=s[i]
-# は,が nsubj,csubj
+# は,が PART,nsubj,csubj
   for s in d:
-    for i in range(len(s)):
+    for i in reversed(range(len(s))):
       if s[i].deprel.startswith("nsubj") or s[i].deprel.startswith("csubj"):
         j=s.index(s[i].head)
         k=s[j].deprel
@@ -93,8 +93,12 @@ def translate(kanbun):
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         if s[j-1].id!=0:
-          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
-          s[j].head=s[i]
+          if s[j-1].lemma=="者" and s[j-1].deprel=="case":
+            s[j-1].form=w
+            s[j-1].id=0
+          else:
+            s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+            s[j].head=s[i]
 # UD化
   kundoku=""
   for s in d:
