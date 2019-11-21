@@ -118,10 +118,11 @@ def translate(kanbun):
     for j,t in enumerate(s):
       w[j].head=w[s.index(t.head)]
     d[i]=w
+# Universal Dependencies化
   kundoku=""
   for s in d:
     for i in range(len(s)):
       s[i].id=i+1
-    kundoku+="# text = "+"".join(t.form for t in s)+"\n"+"\n".join(str(t) for t in s)+"\n\n"
+    kundoku+="# text = "+"".join(t.form for t in s if t.form!="_")+"\n"+"\n".join(str(t) for t in s)+"\n\n"
   return UDKundokuEntry(kundoku)
 
