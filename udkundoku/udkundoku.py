@@ -118,6 +118,27 @@ def translate(kanbun):
     for j,t in enumerate(s):
       w[j].head=w[s.index(t.head)]
     d[i]=w
+# の
+  for s in d:
+    for i in reversed(range(len(s))):
+      if s[i].form=="之" and s[i].upos=="SCONJ":
+        s[i].form="の"
+        s[i].id=0
+      elif s[i].deprel=="nmod" or s[i].deprel=="det":
+        j=s.index(s[i].head)
+        if j-i==1:
+          s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
+          continue
+        x=[k for k in range(i+1,j) if s[k].form=="の" or s[k].deprel=="root"]
+        if x!=[]:
+          continue
+        x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
+        while set(x)!={i,j}:
+          x=[k if k==i or k==j else x[k] for k in x]
+        j=len([k for k in x if k==i])
+        s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
+        s[j].head=s[i]
 # Universal Dependencies化
   kundoku=""
   for s in d:
