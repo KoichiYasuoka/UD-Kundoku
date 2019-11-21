@@ -1,6 +1,11 @@
 #! /usr/bin/python -i
 # coding=utf-8
 
+import unidic2ud
+if unidic2ud.dictlist().find("qkana\n")<0:
+  raise OSError("qkana for unidic2ud not found")
+QKANA=unidic2ud.load("qkana")
+
 import udkanbun
 
 class UDKundokuEntry(udkanbun.UDPipeEntry):

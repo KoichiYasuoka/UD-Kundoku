@@ -20,7 +20,7 @@ class qkanaPostInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.1.1",
+  version="0.1.2",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",

@@ -1,4 +1,4 @@
-from .udkundoku import translate
+from .udkundoku import translate,QKANA
 
-__all__=[ translate ]
+__all__=[ translate,QKANA ]
 
