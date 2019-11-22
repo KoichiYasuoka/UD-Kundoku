@@ -12,7 +12,10 @@ class qkanaPostInstall(install):
   def run(self):
     import atexit
     def qkana_install():
-      import unidic2ud
+      try:
+        import unidic2ud
+      except:
+        OSError("unidic2ud not found")
       if unidic2ud.dictlist().find("qkana\n")<0:
         import subprocess
         subprocess.run(["udcabocha","--download=qkana"])
@@ -21,7 +24,7 @@ class qkanaPostInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.1.6",
+  version="0.1.7",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
@@ -31,7 +34,7 @@ setuptools.setup(
   license="MIT",
   keywords="udkanbun nlp",
   packages=setuptools.find_packages(),
-  install_requires=["udkanbun>=1.3.2","unidic2ud>=1.4.7"],
+  install_requires=["udkanbun>=1.3.4","unidic2ud>=1.4.8"],
   python_requires=">=3.6",
   cmdclass={"install":qkanaPostInstall},
   classifiers=[
