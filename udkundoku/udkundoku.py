@@ -109,6 +109,24 @@ def translate(kanbun,raw=False):
           else:
             s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
             s[j].head=s[i]
+# を に と obj ccomp
+  for s in d:
+    for i in reversed(range(len(s))):
+      if s[i].deprel=="obj" or s[i].deprel=="ccomp":
+        j=s.index(s[i].head)
+        k=s[j].xpos
+        w="に" if k=="v,動詞,行為,移動" else "と" if k=="v,動詞,行為,交流" else "を"
+        if j-i==1:
+          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
+          continue
+        x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
+        while set(x)!={i,j}:
+          x=[k if k==i or k==j else x[k] for k in x]
+        j=len([k for k in x if k==i])
+        if s[j-1].id!=0:
+          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
 # UD化
   kundoku=""
   for s in d:
