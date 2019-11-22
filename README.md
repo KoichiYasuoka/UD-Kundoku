@@ -15,6 +15,11 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 ```
 `udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)).
 
+You can simply use `udkundoku` on the command line:
+```sh
+echo 欲治其國者先齊其家 | udkundoku -j
+```
+
 ## Installation for Linux
 
 Binary wheel is available for Linux, and is installed by default when you use `pip`:
