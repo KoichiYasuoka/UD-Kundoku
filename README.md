@@ -7,13 +7,13 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 ## Basic usage
 
 ```py
->>> import udkanbun
->>> lzh=udkanbun.load()
->>> s=lzh("未有義而後其君者也")
 >>> import udkundoku
+>>> lzh=udkundoku.load()
+>>> s=lzh("未有義而後其君者也")
 >>> t=udkundoku.translate(s)
 >>> print(t)
 ```
+`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)).
 
 ## Installation for Linux
 
