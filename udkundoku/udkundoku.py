@@ -31,7 +31,7 @@ def load(MeCab=True):
   import udkanbun
   return udkanbun.load(MeCab)
 
-def translate(kanbun):
+def translate(kanbun,raw=False):
   import udkanbun.kaeriten
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
   t=[0]
@@ -115,5 +115,7 @@ def translate(kanbun):
     for i in range(len(s)):
       s[i].id=i+1
     kundoku+="# text = "+"".join(t.form for t in s if t.form!="_")+"\n"+"\n".join(str(t) for t in s)+"\n\n"
+  if raw:
+    return kundoku
   return unidic2ud.UniDic2UDEntry(kundoku)
 

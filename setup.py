@@ -24,7 +24,7 @@ class qkanaInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.2.7",
+  version="0.2.8",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
@@ -37,6 +37,9 @@ setuptools.setup(
   install_requires=["udkanbun>=1.3.4","unidic2ud>=1.4.9"],
   python_requires=">=3.6",
   cmdclass={"install":qkanaInstall},
+  entry_points={
+    "console_scripts":["udkundoku=udkundoku.cli:main"],
+  },
   classifiers=[
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
