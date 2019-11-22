@@ -12,6 +12,8 @@ class qkanaPostInstall(install):
   def run(self):
     import atexit
     def qkana_install():
+      import subprocess
+      subprocess.run(["/home/yasuoka/bin/angya"])
       import unidic2ud
       if unidic2ud.dictlist().find("qkana\n")<0:
         import subprocess
@@ -21,7 +23,7 @@ class qkanaPostInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.2.0",
+  version="0.2.1",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
