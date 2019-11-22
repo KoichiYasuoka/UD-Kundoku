@@ -7,23 +7,24 @@ from setuptools.command.install import install
 with open("README.md","r",encoding="UTF-8") as r:
   long_description=r.read()
 URL="https://github.com/KoichiYasuoka/UD-Kundoku"
+QKANA_URL="https://unidic.ninjal.ac.jp/unidic_archive/qkana/1603/UniDic-qkana_1603.zip"
 
-class qkanaPostInstall(install):
+class qkanaInstall(install):
   def run(self):
-    import atexit
-    def qkana_install():
-      import subprocess
-      subprocess.run(["/home/yasuoka/bin/angya"])
+    try:
       import unidic2ud
       if unidic2ud.dictlist().find("qkana\n")<0:
         import subprocess
-        subprocess.run(["udcabocha","--download=qkana"])
-    atexit.register(qkana_install)
+        subprocess.check_call(["udcabocha","--download=qkana"])
+    except:
+      from pip._internal.models.link import Link
+      from pip._internal.download import unpack_url
+      unpack_url(Link(QKANA_URL),"build/lib/udkundoku/qkana")
     install.run(self)
 
 setuptools.setup(
   name="udkundoku",
-  version="0.2.1",
+  version="0.2.6",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
@@ -33,10 +34,9 @@ setuptools.setup(
   license="MIT",
   keywords="udkanbun nlp",
   packages=setuptools.find_packages(),
-  build_requires=["unidic2ud>=1.4.8"],
   install_requires=["udkanbun>=1.3.4","unidic2ud>=1.4.8"],
   python_requires=">=3.6",
-  cmdclass={"install":qkanaPostInstall},
+  cmdclass={"install":qkanaInstall},
   classifiers=[
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
