@@ -3,7 +3,13 @@
 
 import unidic2ud
 if unidic2ud.dictlist().find("qkana\n")<0:
-  unidic2ud.download("qkana","unidic")
+  import os
+  p=os.path.join(os.path.abspath(os.path.dirname(__file__)),"qkana")
+  if os.path.isdir(p):
+    import shutil
+    shutil.move(p,unidic2ud.DOWNLOAD_DIR)
+  else:
+    unidic2ud.download("qkana","unidic")
 QKANA=unidic2ud.UniDic2UD("qkana",None)
 
 class UDKundokuToken(object):
