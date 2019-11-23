@@ -44,7 +44,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 
 You can simply use `udkundoku` on the command line:
 ```sh
-echo 欲治其國者先齊其家 | udkundoku -j
+echo 不入虎穴不得虎子 | udkundoku -j
 ```
 
 ## Installation for Linux
