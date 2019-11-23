@@ -114,10 +114,10 @@ def translate(kanbun,raw=False):
     for i in reversed(range(len(s))):
       if s[i].deprel=="xcomp":
         j=s.index(s[i].head)
-        k=s[j].xpos
-        if k=="v,動詞,行為,分類":
+        if j<i:
           continue
-        elif k=="v,動詞,行為,使役":
+        k=s[j].xpos
+        if k=="v,動詞,行為,使役":
           w="せ"
         else:
           w="が"
