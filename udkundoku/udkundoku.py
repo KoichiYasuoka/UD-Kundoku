@@ -109,6 +109,29 @@ def translate(kanbun,raw=False):
           else:
             s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
             s[j].head=s[i]
+# せ の xcomp
+  for s in d:
+    for i in reversed(range(len(s))):
+      if s[i].deprel=="xcomp":
+        j=s.index(s[i].head)
+        k=s[j].xpos
+        if k=="v,動詞,行為,分類":
+          continue
+        elif k=="v,動詞,行為,使役":
+          w="せ"
+        else:
+          w="が"
+        if j-i==1:
+          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
+          continue
+        x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
+        while set(x)!={i,j}:
+          x=[k if k==i or k==j else x[k] for k in x]
+        j=len([k for k in x if k==i])
+        if s[j-1].id!=0:
+          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
 # を に と obj ccomp iobj
   for s in d:
     for i in reversed(range(len(s))):
@@ -120,6 +143,10 @@ def translate(kanbun,raw=False):
           w="を" if x=="iobj" else "と"
         elif k=="v,動詞,行為,移動":
           w="に"
+        elif k=="v,動詞,行為,使役":
+          w="をして"
+        elif k=="v,動詞,行為,分類":
+          w="の"
         else:
           w="に" if x=="iobj" else "を"
         if j-i==1:
