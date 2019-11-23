@@ -148,7 +148,9 @@ def translate(kanbun,raw=False):
         if j<i:
           continue
         k=s[j].xpos
-        if k=="v,動詞,行為,交流" or k=="v,動詞,行為,伝達":
+        if k=="v,動詞,存在,存在":
+          continue
+        elif k=="v,動詞,行為,交流" or k=="v,動詞,行為,伝達":
           w="を" if x=="iobj" else "と"
         elif k=="v,動詞,行為,移動":
           w="に"
@@ -171,6 +173,14 @@ def translate(kanbun,raw=False):
           s[j].head=s[i]
 # ADVチェック
   for s in d:
+    for i in reversed(range(len(s))):
+      t=s[i]
+      if t.upos=="ADV" and t.form=="未":
+        j=s.index(t.head)
+        s[i]=UDKundokuToken(0,"ず","_","AUX","_","_","aux","_","SpaceAfter=No")
+        s[i].head=t.head
+        t.form="未だ"
+        s.insert(j,t)
     for t in s:
       if t.upos!="ADV":
         continue
@@ -282,8 +292,9 @@ def katsuyo_verb(form,lemma,xpos):
 KATSUYO_NEXT={
   "ず,AUX":"0,",
   "なし,AUX":"3,こと",
-  "無,VERB":"3,こと",
+  "得,AUX":"3,を",
   "欲,AUX":"0,んと",
+  "無,VERB":"3,こと",
 }
 
 def katsuyo(sentence,ix):
@@ -310,7 +321,7 @@ def katsuyo(sentence,ix):
   if m in KATSUYO_NEXT:
     x=KATSUYO_NEXT[m].split(",")
     return k[int(x[0])]+x[1]
-  if u.upos=="ADP" or u.upos=="PART":
+  if u.upos=="ADP" or u.upos=="AUX" or u.upos=="PART":
     return k[3]
   return k[1]+"て"
 
