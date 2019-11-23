@@ -12,6 +12,11 @@ if unidic2ud.dictlist().find("qkana\n")<0:
     unidic2ud.download("qkana","unidic")
 QKANA=unidic2ud.UniDic2UD("qkana",None)
 
+from udkundoku.adv import ADV
+from udkundoku.aux import AUX
+from udkundoku.part import PART
+from udkundoku.verb import VERB
+
 class UDKundokuToken(object):
   def __init__(self,id,form,lemma,upos,xpos,feats,deprel,deps,misc):
     self.id=id
@@ -164,6 +169,32 @@ def translate(kanbun,raw=False):
         if s[j-1].id!=0:
           s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
+# ADVチェック
+  for s in d:
+    for t in s:
+      if t.upos!="ADV":
+        continue
+      i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
+      if i in ADV:
+        x=ADV[i].split(":")
+        t.form,t.upos=x[0],x[1]
+# PARTチェック
+  for s in d:
+    for t in s:
+      if t.upos!="PART":
+        continue
+      i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
+      if i in PART:
+        x=PART[i].split(":")
+        t.form,t.upos=x[0],x[1]
+# AUX VERB 活用チェック
+  for s in d:
+    for i in range(len(s)):
+      if s[i].upos!="AUX"and s[i].upos!="VERB":
+        continue
+      if s[i].deprel=="amod":
+        continue
+      s[i].form=katsuyo(s,i)
 # UD化
   kundoku=""
   for s in d:
@@ -173,4 +204,66 @@ def translate(kanbun,raw=False):
   if raw:
     return kundoku
   return unidic2ud.UniDic2UDEntry(kundoku)
+
+KATSUYO_TABLE={
+  "ぶ,五段-バ行":"xば:xび:xぶ:xぶ:xべ:xべ",
+  "ぐ,五段-ガ行":"xが:xぎ:xぐ:xぐ:xげ:xげ",
+  "ふ,五段-ワア行":"xは:xひ:xふ:xふ:xへ:xへ",
+  "ふ,文語四段-ハ行":"xは:xひ:xふ:xふ:xへ:xへ",
+  "ふ,文語下二段-ハ行":"xへ:xへ:xふ:xへる:xへれ:xへよ",
+  "む,五段-マ行":"xま:xみ:xむ:xむ:xめ:xめ",
+  "き,文語形容詞-ク":"xから:xく:xし:xき:xけれ:xくせよ",
+  "き,文語形容詞-シク":"xしから:xしく:xし:xしき:xしけれ:xしくせよ",
+  "る,五段-ラ行":"xら:xり:xる:xる:xれ:xれ",
+}
+
+def katsuyo_verb(form,lemma,xpos):
+  t=lemma+","+xpos
+  if t in VERB:
+    return VERB[t].replace("x",form)
+  for g in "ぶぐふむきる":
+    s=QKANA.mecab(lemma+g).split(",")
+    if s[0].startswith(lemma+g+"\t"):
+      t=g+","+s[4]
+      if t in KATSUYO_TABLE:
+        return KATSUYO_TABLE[t].replace("x",form)
+  if s[4].startswith("上一段-"):
+    return "x:x:xる:xる:xれ:xよ".replace("x",form)
+  if s[4].startswith("下一段-"):
+    return "x:x:xる:xる:xれ:xよ".replace("x",form)
+  return "xせ:xし:xす:xする:xすれ:xせよ".replace("x",form)
+
+KATSUYO_NEXT={
+  "ず,AUX":"0,",
+  "なし,AUX":"3,こと",
+  "無,VERB":"3,こと",
+}
+
+def katsuyo(sentence,ix):
+  t=sentence[ix]
+  m=t.form if t.lemma=="_" else t.lemma
+  if t.upos=="AUX":
+    if t.lemma=="能":
+      i=sentence.index(t.head)
+      if i>ix:
+        return "能く"
+    k=AUX[m+","+t.xpos].split(":")
+  elif t.upos=="VERB":
+    k=katsuyo_verb(t.form,m,t.xpos).split(":")
+  else:
+    return t.form
+  while len(sentence)-ix>1:
+    ix+=1
+    u=sentence[ix]
+    if u.form!="_":
+      break
+  else:
+    return k[2]
+  m=u.form+","+u.upos
+  if m in KATSUYO_NEXT:
+    x=KATSUYO_NEXT[m].split(",")
+    return k[int(x[0])]+x[1]
+  if u.upos=="ADP" or u.upos=="PART":
+    return k[3]
+  return k[1]+"て"
 
