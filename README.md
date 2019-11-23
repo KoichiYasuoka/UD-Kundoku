@@ -26,6 +26,16 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 11	得	得	VERB	v,動詞,行為,得失	_	5	parataxis	_	Gloss=get|SpaceAfter=No
 12	ず	不	AUX	v,副詞,否定,無界	Polarity=Neg	11	advmod	_	Gloss=not|SpaceAfter=No
 
+>>> print(s.to_tree())
+不 <┐     advmod
+入 ─┴─┬─┐ root
+虎 <┐ │ │ nmod
+穴 ─┘<┘ │ obj
+不 <┐   │ advmod
+得 ─┴─┐<┘ parataxis
+虎 <┐ │   nmod
+子 ─┘<┘   obj
+
 >>> print(t.to_tree())
     虎 ─┐<┐     nmod(体言による連体修飾語)
     の <┘ │     case(格表示)
@@ -40,7 +50,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
     得 ─┬───┘<┘ parataxis(隣接表現)
     ず <┘       advmod(連用修飾語)
 ```
-`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `to_tree()` is from that of UniDic2UD.
+`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `to_tree()` is from that of UD-Kanbun or UniDic2UD.
 
 You can simply use `udkundoku` on the command line:
 ```sh
