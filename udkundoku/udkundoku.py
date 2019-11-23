@@ -92,6 +92,8 @@ def translate(kanbun,raw=False):
     for i in reversed(range(len(s))):
       if s[i].deprel.startswith("nsubj") or s[i].deprel.startswith("csubj"):
         j=s.index(s[i].head)
+        if j<i:
+          continue
         k=s[j].deprel
         w="が" if k=="ccomp" or k=="advcl" or k.startswith("csubj") else "は"
         if j-i==1:
@@ -138,6 +140,8 @@ def translate(kanbun,raw=False):
       x=s[i].deprel
       if x=="obj" or x=="ccomp" or x=="iobj":
         j=s.index(s[i].head)
+        if j<i:
+          continue
         k=s[j].xpos
         if k=="v,動詞,行為,交流" or k=="v,動詞,行為,伝達":
           w="を" if x=="iobj" else "と"
