@@ -178,10 +178,10 @@ def translate(kanbun,raw=False):
       if i in ADV:
         x=ADV[i].split(":")
         t.form,t.upos=x[0],x[1]
-# PARTチェック
+# PART CCONJ チェック
   for s in d:
     for t in s:
-      if t.upos!="PART":
+      if t.upos!="PART" and t.upos!="CCONJ":
         continue
       i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
       if i in PART:
