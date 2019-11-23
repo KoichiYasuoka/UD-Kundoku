@@ -189,12 +189,39 @@ def translate(kanbun,raw=False):
         t.form,t.upos=x[0],x[1]
 # AUX VERB 活用チェック
   for s in d:
+    for i in reversed(range(len(s))):
+      if s[i].deprel=="flat:vv":
+        s.insert(i+1,UDKundokuToken(0,"す","_","AUX","_","_","aux","_","SpaceAfter=No"))
+        s[i+1].head=s[i].head
     for i in range(len(s)):
       if s[i].upos!="AUX"and s[i].upos!="VERB":
         continue
-      if s[i].deprel=="amod":
+      j=s[i].deprel
+      if j=="amod" or j=="flat:vv":
         continue
-      s[i].form=katsuyo(s,i)
+      x=[t for t in s if t.head==s[i] and t.deprel=="flat:vv"]
+      if x==[]:
+        s[i].form=katsuyo(s,i)
+# よ vocative
+  for s in d:
+    for i in reversed(range(len(s))):
+      if s[i].deprel=="vocative":
+        s.insert(i+1,UDKundokuToken(0,"よ","_","ADP","_","_","case","_","SpaceAfter=No"))
+        s[i+1].head=s[i]
+        j=s.index(s[i].head)
+        if s[j].upos=="VERB" and s[j].lemma=="請":
+          s[j].form="請ふ"
+          x=[k for k,t in enumerate(s) if t.head==s[j] and (t.deprel=="ccomp" or t.deprel=="obj")]
+          if x==[]:
+            continue
+          j=x[-1]
+        if s[j].upos=="VERB":
+          f=s[j].id
+          if len(s)-j>1:
+            f=s[j+1].id
+          if f>0:
+            k=katsuyo_verb(s[j].lemma,s[j].lemma,s[j].xpos).split(":")
+            s[j].form=k[5]
 # UD化
   kundoku=""
   for s in d:
@@ -215,7 +242,6 @@ KATSUYO_TABLE={
   "づ,五段-ダ行":"xだ:xぢ:xづ:xづ:xで:xで",
   "づ,文語上二段-ダ行":"xぢ:xぢ:xづ:xぢる:xぢれ:xぢよ",
   "づ,文語下二段-ダ行":"xで:xで:xづ:xでる:xでれ:xでよ",
-  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "ふ,五段-ワア行":"xは:xひ:xふ:xふ:xへ:xへ",
   "ふ,文語四段-ハ行":"xは:xひ:xふ:xふ:xへ:xへ",
   "ふ,文語上二段-ハ行":"xひ:xひ:xふ:xひる:xひれ:xひよ",
@@ -223,12 +249,10 @@ KATSUYO_TABLE={
   "む,五段-マ行":"xま:xみ:xむ:xむ:xめ:xめ",
   "む,文語上二段-マ行":"xみ:xみ:xむ:xみる:xみれ:xみよ",
   "む,文語下二段-マ行":"xめ:xめ:xむ:xめる:xめれ:xめよ",
-  "ぬ,五段-ナ行":"xな:xに:xぬ:xぬ:xね:xね",
-  "ぬ,文語上二段-ナ行":"xに:xに:xぬ:xにる:xにれ:xによ",
-  "ぬ,文語下二段-ナ行":"xね:xね:xぬ:xねる:xねれ:xねよ",
   "つ,五段-タ行":"xた:xち:xつ:xつ:xて:xて",
   "つ,文語上二段-タ行":"xち:xち:xつ:xちる:xちれ:xちよ",
   "つ,文語下二段-タ行":"xて:xて:xつ:xてる:xてれ:xてよ",
+  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "き,文語形容詞-ク":"xから:xく:xし:xき:xけれ:xくせよ",
   "き,文語形容詞-シク":"xしから:xしく:xし:xしき:xしけれ:xしくせよ",
   "く,五段-カ行":"xか:xき:xく:xく:xけ:xけ",
@@ -241,7 +265,7 @@ def katsuyo_verb(form,lemma,xpos):
   t=lemma+","+xpos
   if t in VERB:
     return VERB[t].replace("x",form)
-  for g in "ぶぐづずふむぬつきくる":
+  for g in "ぶぐづふむつずきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
@@ -251,6 +275,8 @@ def katsuyo_verb(form,lemma,xpos):
     return "x:x:xる:xる:xれ:xよ".replace("x",form)
   if s[4].startswith("下一段-"):
     return "x:x:xる:xる:xれ:xよ".replace("x",form)
+  if xpos.startswith("v,動詞,描写,"):
+    return "xなら:xなり:xなり:xなる:xなれ:xなれ".replace("x",form)
   return "xせ:xし:xす:xする:xすれ:xせよ".replace("x",form)
 
 KATSUYO_NEXT={
