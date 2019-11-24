@@ -277,7 +277,7 @@ def translate(kanbun,raw=False):
           continue
         s.insert(i,UDKundokuToken(0,"ば","_","ADP","_","_","case","_","SpaceAfter=No"))
         s[i].head=t
-    for t in s:
+    for k,t in enumerate(s):
       if t.upos!="ADV" and t.deprel!="advmod":
         continue
       i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
@@ -287,6 +287,9 @@ def translate(kanbun,raw=False):
       elif t.upos=="ADV" and t.lemma!="_":
         t.form+="に"
       elif t.xpos.startswith("v,動詞,描写,"):
+        if len(s)-k>1:
+          if s[k+1].xpos=="p,接尾辞,*,*":
+            continue
         t.form+="に"
         t.upos="ADV"
 # PART CCONJ PRON チェック
@@ -404,6 +407,7 @@ KATSUYO_TABLE={
   "づ,五段-ダ行":"xだ:xぢ:xづ:xづ:xで:xで",
   "づ,文語上二段-ダ行":"xぢ:xぢ:xづ:xぢる:xぢれ:xぢよ",
   "づ,文語下二段-ダ行":"xで:xで:xづ:xでる:xでれ:xでよ",
+  "す,五段-サ行":"xさ:xし:xす:xす:xせ:xせ",
   "ふ,五段-ワア行":"xは:xひ:xふ:xふ:xへ:xへ",
   "ふ,文語四段-ハ行":"xは:xひ:xふ:xふ:xへ:xへ",
   "ふ,文語上二段-ハ行":"xひ:xひ:xふ:xひる:xひれ:xひよ",
@@ -426,7 +430,7 @@ def katsuyo_verb(form,lemma,xpos):
   t=lemma+","+xpos
   if t in VERB:
     return VERB[t].replace("x",form)
-  for g in "ずぶぐづふむつきくる":
+  for g in "ずぶぐづすふむつきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
@@ -466,6 +470,8 @@ def katsuyo(sentence,ix):
     return k[int(x[0])]+x[1]
   if u.upos=="ADP" or u.upos=="AUX" or u.upos=="PART":
     return k[3]
+  if u.lemma=="爲" and u.xpos=="v,動詞,存在,存在":
+    return k[1]
   return k[1]+"て"
 
 KATSUYO_NEXT={
