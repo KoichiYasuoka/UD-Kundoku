@@ -40,6 +40,22 @@ def load(MeCab=True):
 def translate(kanbun,raw=False):
   import udkanbun.kaeriten
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
+# 同時移動ロジック
+  n=[-1]*len(kanbun)
+  for i,t in enumerate(k):
+    if k[i]==[]:
+      continue
+    if len(k)-i==1:
+      continue
+    if kanbun[i+1].id==1:
+      continue
+    if kanbun[i].lemma=="所" and kanbun[i+1].lemma=="以":
+      n[i],n[i+1]=i+1,i
+    elif kanbun[i+1].deprel=="flat:vv" and kanbun[i+1].head==kanbun[i]:
+      n[i],n[i+1]=i+1,i
+    elif kanbun[i+1].deprel=="fixed" and kanbun[i+1].xpos=="p,接尾辞,*,*":
+      n[i],n[i+1]=i+1,i
+# 語順入れ替え
   t=[0]
   c=[False]*len(kanbun)
   for i in reversed(range(1,len(kanbun))):
@@ -47,17 +63,25 @@ def translate(kanbun,raw=False):
       if kanbun[i].id==1:
         t.append(0)
       continue
+    j=len(t)
     c[i]=True
     t.append(i)
+    if n[i]==i-1:
+      i-=1
+      c[i]=True
+      t.append(i)
     if k[i]==[]:
       if kanbun[i].id==1:
         t.append(0)
       continue
-    j=len(t)-1
     while k[i]!=[]:
       i=k[i][0]
       c[i]=True
       t.insert(j,i)
+      if n[i]==i-1:
+        i-=1
+        c[i]=True
+        t.insert(j,i)
   d,s=[],[]
   for i in reversed(range(len(t)-1)):
     if t[i]==0:
@@ -88,7 +112,9 @@ def translate(kanbun,raw=False):
         if x!=[]:
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
-        while set(x)!={i,j}:
+        y={i,j}
+        while set(x)!=y:
+          y=set(x)
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
@@ -107,7 +133,9 @@ def translate(kanbun,raw=False):
           s[j].head=s[i]
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
-        while set(x)!={i,j}:
+        y={i,j}
+        while set(x)!=y:
+          y=set(x)
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         if s[j-1].id!=0:
@@ -134,7 +162,9 @@ def translate(kanbun,raw=False):
           s[j].head=s[i]
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
-        while set(x)!={i,j}:
+        y={i,j}
+        while set(x)!=y:
+          y=set(x)
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         if s[j-1].id!=0:
@@ -166,7 +196,9 @@ def translate(kanbun,raw=False):
           s[j].head=s[i]
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
-        while set(x)!={i,j}:
+        y={i,j}
+        while set(x)!=y:
+          y=set(x)
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         if s[j-1].id!=0:
@@ -184,7 +216,9 @@ def translate(kanbun,raw=False):
             pass
           elif j-i!=1:
             x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
-            while set(x)!={i,j}:
+            y={i,j}
+            while set(x)!=y:
+              y=set(x)
               x=[k if k==i or k==j else x[k] for k in x]
             j=len([k for k in x if k==i])
           t=s.pop(h)
@@ -205,6 +239,8 @@ def translate(kanbun,raw=False):
           continue
         j=s.index(s[i].head)
         if j<i:
+          if s[i].lemma=="焉":
+            s[i].form="_"
           continue
         if j-i==1:
           s.insert(j,UDKundokuToken(0,"に","_","ADP","_","_","case","_","SpaceAfter=No"))
@@ -214,7 +250,9 @@ def translate(kanbun,raw=False):
         if x!=[]:
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
-        while set(x)!={i,j}:
+        y={i,j}
+        while set(x)!=y:
+          y=set(x)
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         s.insert(j,UDKundokuToken(0,"に","_","ADP","_","_","case","_","SpaceAfter=No"))
@@ -229,6 +267,16 @@ def translate(kanbun,raw=False):
         s[i].head=t.head
         t.form="未だ"
         s.insert(j,t)
+      elif t.upos=="ADV" and t.form=="則":
+        j=s.index(t.head)
+        t.form="則ち"
+        if j<=i:
+          continue
+        x=[k for k in range(0,i) if s[k].head==t.head and s[k].deprel=="advcl"]
+        if x==[]:
+          continue
+        s.insert(i,UDKundokuToken(0,"ば","_","ADP","_","_","case","_","SpaceAfter=No"))
+        s[i].head=t
     for t in s:
       if t.upos!="ADV":
         continue
@@ -236,15 +284,25 @@ def translate(kanbun,raw=False):
       if i in ADV:
         x=ADV[i].split(":")
         t.form,t.upos=x[0],x[1]
+      elif t.lemma!="_":
+        t.form=t.form+"に"
 # PART CCONJ PRON チェック
   for s in d:
-    for t in s:
+    for k,t in enumerate(s):
       if t.upos!="PART" and t.upos!="CCONJ" and t.upos!="PRON":
         continue
       i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
       if i in PART:
         x=PART[i].split(":")
         t.form,t.upos=x[0],x[1]
+      elif t.upos=="PART":
+        if t.xpos=="p,助詞,句末,*":
+          if len(s)-k==1:
+            t.form="か"
+          elif s[k+1].upos=="PART":
+            t.form="_"
+          else:
+            t.form="か"
 # AUX VERB 活用チェック
   for s in d:
     for i in reversed(range(len(s))):
@@ -257,15 +315,21 @@ def translate(kanbun,raw=False):
       j=s[i].deprel
       if j=="amod" or j=="flat:vv":
         continue
-      x=[t for t in s if t.head==s[i] and t.deprel=="flat:vv"]
+      x=[t for t in s if t.head==s[i] and (t.deprel=="flat:vv" or t.xpos=="p,接尾辞,*,*")]
       if x==[]:
         s[i].form=katsuyo(s,i)
 # よ vocative
   for s in d:
     for i in reversed(range(len(s))):
       if s[i].deprel=="vocative":
-        s.insert(i+1,UDKundokuToken(0,"よ","_","ADP","_","_","case","_","SpaceAfter=No"))
-        s[i+1].head=s[i]
+        f=False
+        if len(s)-i==1:
+          f=True
+        elif s[i+1].upos!="ADP" and s[i+1].upos!="PART":
+          f=True
+        if f:
+          s.insert(i+1,UDKundokuToken(0,"よ","_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[i+1].head=s[i]
         j=s.index(s[i].head)
         if s[j].upos=="VERB" and s[j].lemma=="請":
           s[j].form="請ふ"
@@ -371,14 +435,6 @@ def katsuyo_verb(form,lemma,xpos):
     return "xなら:xなり:xなり:xなる:xなれ:xなれ".replace("x",form)
   return "xせ:xし:xす:xする:xすれ:xせよ".replace("x",form)
 
-KATSUYO_NEXT={
-  "ず,AUX":"0,",
-  "なし,AUX":"3,こと",
-  "得,AUX":"3,を",
-  "欲,AUX":"0,んと",
-  "無,VERB":"3,こと",
-}
-
 def katsuyo(sentence,ix):
   t=sentence[ix]
   m=t.form if t.lemma=="_" else t.lemma
@@ -407,3 +463,17 @@ def katsuyo(sentence,ix):
     return k[3]
   return k[1]+"て"
 
+KATSUYO_NEXT={
+  "ず,AUX":"0,",
+  "せ,ADP":"1,",
+  "なし,AUX":"3,こと",
+  "ば,ADP":"4,",
+  "んとす,AUX":"0,",
+  "得,AUX":"3,を",
+  "易,VERB":"1,",
+  "欲,AUX":"0,んと",
+  "無,VERB":"3,こと",
+  "被,AUX":"0,",
+  "見,AUX":"0,",
+  "難,VERB":"1,",
+}
