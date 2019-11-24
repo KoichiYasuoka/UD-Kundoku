@@ -285,7 +285,10 @@ def translate(kanbun,raw=False):
         x=ADV[i].split(":")
         t.form,t.upos=x[0],x[1]
       elif t.upos=="ADV" and t.lemma!="_":
-        t.form=t.form+"に"
+        t.form+="に"
+      elif t.xpos.startwith("v,動詞,描写,"):
+        t.form+="に"
+        t.upos="ADV"
 # PART CCONJ PRON チェック
   for s in d:
     for k,t in enumerate(s):
