@@ -158,7 +158,7 @@ def translate(kanbun,raw=False):
         elif k=="v,動詞,行為,使役":
           w="をして"
         elif k=="v,動詞,行為,分類":
-          w="の"
+          w="が" if x=="ccomp" else "の" 
         else:
           w="に" if x=="iobj" else "を"
         if j-i==1:
@@ -197,6 +197,28 @@ def translate(kanbun,raw=False):
       if i in ADP:
         x=ADP[i].split(":")
         t.id,t.form,t.upos=0,x[0],x[1]
+# に obl
+  for s in d:
+    for i in reversed(range(len(s))):
+      if s[i].deprel.startswith("obl"):
+        if s[i].lemma=="自" and s[i].upos=="PRON":
+          continue
+        j=s.index(s[i].head)
+        if j<i:
+          continue
+        if j-i==1:
+          s.insert(j,UDKundokuToken(0,"に","_","ADP","_","_","case","_","SpaceAfter=No"))
+          s[j].head=s[i]
+          continue
+        x=[k for k in range(i+1,j) if s[k].deprel=="case" and s[k].head==s[i]]
+        if x!=[]:
+          continue
+        x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
+        while set(x)!={i,j}:
+          x=[k if k==i or k==j else x[k] for k in x]
+        j=len([k for k in x if k==i])
+        s.insert(j,UDKundokuToken(0,"に","_","ADP","_","_","case","_","SpaceAfter=No"))
+        s[j].head=s[i]
 # ADVチェック
   for s in d:
     for i in reversed(range(len(s))):
@@ -214,10 +236,10 @@ def translate(kanbun,raw=False):
       if i in ADV:
         x=ADV[i].split(":")
         t.form,t.upos=x[0],x[1]
-# PART CCONJ チェック
+# PART CCONJ PRON チェック
   for s in d:
     for t in s:
-      if t.upos!="PART" and t.upos!="CCONJ":
+      if t.upos!="PART" and t.upos!="CCONJ" and t.upos!="PRON":
         continue
       i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
       if i in PART:
@@ -258,7 +280,41 @@ def translate(kanbun,raw=False):
           if f>0:
             k=katsuyo_verb(s[j].lemma,s[j].lemma,s[j].xpos).split(":")
             s[j].form=k[5]
+# 如何(いかん) 所謂(いわゆる) 所以(ゆえん)
+  for s in d:
+    for i in range(len(s)-1):
+      k=s[i].lemma
+      if k=="如" or k=="奈" or k=="若":
+        if s[i+1].lemma=="何":
+          s[i].form,s[i+1].form="いか","ん"
+      elif k=="謂":
+        if s[i+1].lemma=="所":
+          s[i].form,s[i+1].form="いわ","ゆる"
+    for i in range(len(s)):
+      if s[i].lemma=="所" and s[i].upos=="PART":
+        u=s[i].head
+        if u.lemma=="以":
+          s[i].form="ゆえん"
+          u.form="_"
 # UD化
+  for s in d:
+    for i in reversed(range(len(s))):
+      j=s.index(s[i].head)
+      if abs(i-j)<2:
+        continue
+      z=[-1 if t.head==t else s.index(t.head) for t in s]
+      x,y=min(i,j),max(i,j)
+      for k,w in enumerate(z):
+        if k==x or k==y:
+          continue
+        elif k>x and k<y:
+          if w==-1 or w<x or w>y:
+            break
+        elif w>x and w<y:
+            break
+      else:
+        continue
+      s[i].head=s[i-1] if i>0 else s[1]
   kundoku=""
   for s in d:
     for i in range(len(s)):
