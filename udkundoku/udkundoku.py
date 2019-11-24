@@ -12,6 +12,7 @@ if unidic2ud.dictlist().find("qkana\n")<0:
     unidic2ud.download("qkana","unidic")
 QKANA=unidic2ud.UniDic2UD("qkana",None)
 
+from udkundoku.adp import ADP
 from udkundoku.adv import ADV
 from udkundoku.aux import AUX
 from udkundoku.part import PART
@@ -171,6 +172,31 @@ def translate(kanbun,raw=False):
         if s[j-1].id!=0:
           s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
+# ADPチェック
+  for s in d:
+    for h in reversed(range(len(s))):
+      if s[h].xpos=="v,前置詞,基盤,*":
+        i=s.index(s[h].head)
+        if i>h:
+          j=s.index(s[i].head)
+          w="より" if s[j].xpos=="v,動詞,描写,量" else "に"
+          if j-i<1:
+            pass
+          elif j-i!=1:
+            x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
+            while set(x)!={i,j}:
+              x=[k if k==i or k==j else x[k] for k in x]
+            j=len([k for k in x if k==i])
+          t=s.pop(h)
+          t.id,t.form=0,w
+          s.insert(j-1,t)
+    for t in s:
+      if t.upos!="ADP":
+        continue
+      i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
+      if i in ADP:
+        x=ADP[i].split(":")
+        t.id,t.form,t.upos=0,x[0],x[1]
 # ADVチェック
   for s in d:
     for i in reversed(range(len(s))):

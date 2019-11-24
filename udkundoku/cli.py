@@ -39,11 +39,13 @@ def main():
     i+=1
 
 def output(lzh,optu,optt,optj,width,sentence):
-  if optt==True:
-    return udkundoku.translate(lzh(sentence)).to_tree(BoxDrawingWidth=width,Japanese=optj)
-  if optu==True:
+  if optu:
+    if optt:
+      return udkundoku.translate(lzh(sentence)).to_svg()
     return udkundoku.translate(lzh(sentence),raw=True)
-  if optj==True:
+  if optt:
+    return udkundoku.translate(lzh(sentence)).to_tree(BoxDrawingWidth=width,Japanese=optj)
+  if optj:
     s=""
     for t in udkundoku.translate(lzh(sentence),raw=True).split("\n"):
       if t.startswith("# text = "):
