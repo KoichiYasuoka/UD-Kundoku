@@ -278,13 +278,13 @@ def translate(kanbun,raw=False):
         s.insert(i,UDKundokuToken(0,"ば","_","ADP","_","_","case","_","SpaceAfter=No"))
         s[i].head=t
     for t in s:
-      if t.upos!="ADV":
+      if t.upos!="ADV" and t.deprel!="advmod":
         continue
       i=(t.lemma if t.lemma!="_" else t.form)+","+t.xpos
       if i in ADV:
         x=ADV[i].split(":")
         t.form,t.upos=x[0],x[1]
-      elif t.lemma!="_":
+      elif t.upos=="ADV" and t.lemma!="_":
         t.form=t.form+"に"
 # PART CCONJ PRON チェック
   for s in d:
@@ -303,6 +303,8 @@ def translate(kanbun,raw=False):
             t.form="_"
           else:
             t.form="か"
+        elif t.xpos=="p,助詞,句頭,*":
+          t.form="それ"
 # AUX VERB 活用チェック
   for s in d:
     for i in reversed(range(len(s))):
@@ -389,6 +391,7 @@ def translate(kanbun,raw=False):
   return unidic2ud.UniDic2UDEntry(kundoku)
 
 KATSUYO_TABLE={
+  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "ぶ,五段-バ行":"xば:xび:xぶ:xぶ:xべ:xべ",
   "ぶ,文語上二段-バ行":"xび:xび:xぶ:xびる:xびれ:xびよ",
   "ぶ,文語下二段-バ行":"xべ:xべ:xぶ:xべる:xべれ:xべよ",
@@ -408,7 +411,6 @@ KATSUYO_TABLE={
   "つ,五段-タ行":"xた:xち:xつ:xつ:xて:xて",
   "つ,文語上二段-タ行":"xち:xち:xつ:xちる:xちれ:xちよ",
   "つ,文語下二段-タ行":"xて:xて:xつ:xてる:xてれ:xてよ",
-  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "き,文語形容詞-ク":"xから:xく:xし:xき:xけれ:xくせよ",
   "き,文語形容詞-シク":"xしから:xしく:xし:xしき:xしけれ:xしくせよ",
   "く,五段-カ行":"xか:xき:xく:xく:xけ:xけ",
@@ -421,7 +423,7 @@ def katsuyo_verb(form,lemma,xpos):
   t=lemma+","+xpos
   if t in VERB:
     return VERB[t].replace("x",form)
-  for g in "ぶぐづふむつずきくる":
+  for g in "ずぶぐづふむつきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
@@ -476,4 +478,5 @@ KATSUYO_NEXT={
   "被,AUX":"0,",
   "見,AUX":"0,",
   "難,VERB":"1,",
+  "非ず,AUX":"3,に",
 }
