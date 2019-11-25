@@ -37,20 +37,23 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 子 ─┘<┘   obj
 
 >>> print(t.to_tree())
-    虎 ─┐<┐     nmod(体言による連体修飾語)
-    の <┘ │     case(格表示)
-    穴 ─┬─┘<┐   obj(目的語)
-    に <┘   │   case(格表示)
-  入ら ─┬───┴─┐ root(親)
-ずして <┘     │ advmod(連用修飾語)
-    虎 ─┐<┐   │ nmod(体言による連体修飾語)
-    の <┘ │   │ case(格表示)
-    子 ─┬─┘<┐ │ obj(目的語)
-    を <┘   │ │ case(格表示)
-    得 ─┬───┘<┘ parataxis(隣接表現)
-    ず <┘       advmod(連用修飾語)
+虎 ─┐<┐     nmod(体言による連体修飾語)
+の <┘ │     case(格表示)
+穴 ─┬─┘<┐   obj(目的語)
+に <┘   │   case(格表示)
+入 ─┬───┴─┐ root(親)
+ら  │     │
+ず <┘     │ advmod(連用修飾語)
+し        │
+て        │
+虎 ─┐<┐   │ nmod(体言による連体修飾語)
+の <┘ │   │ case(格表示)
+子 ─┬─┘<┐ │ obj(目的語)
+を <┘   │ │ case(格表示)
+得 ─┬───┘<┘ parataxis(隣接表現)
+ず <┘       advmod(連用修飾語)
 ```
-`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `to_tree()` is from that of UD-Kanbun or UniDic2UD.
+`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `to_tree()` is borrowed from that of UD-Kanbun.
 
 You can simply use `udkundoku` on the command line:
 ```sh
