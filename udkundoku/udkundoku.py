@@ -201,7 +201,7 @@ def translate(kanbun,raw=False):
           if s[j].lemma=="有" or s[j].lemma=="無":
             continue
           w="に"
-        elif k=="v,動詞,行為,交流" or k=="v,動詞,行為,伝達":
+        elif k=="v,動詞,行為,伝達":
           w="と" if x=="ccomp" else "を"
           if x=="obj":
             v=s[i].xpos
@@ -377,7 +377,7 @@ def translate(kanbun,raw=False):
           if f>0:
             k=katsuyo_verb(s[j].lemma,s[j].lemma,s[j].xpos).split(":")
             s[j].form=k[5]
-# 如何(いかん) 所謂(いわゆる) 所以(ゆえん)
+# 如何(いかん) 所謂(いわゆる) 所以(ゆえん) 名詞+ば
   for s in d:
     for i in range(len(s)-1):
       k=s[i].lemma
@@ -393,6 +393,11 @@ def translate(kanbun,raw=False):
         if u.lemma=="以":
           s[i].form="ゆえん"
           u.form="_"
+    for i in range(len(s)):
+      if s[i].form=="ば" and s[i].id==0:
+        x=s[i-1].upos
+        if x!="VERB" and x!="AUX":
+          s[i].form="ならば"
 # UD化
   for s in d:
     for i in reversed(range(len(s))):
@@ -433,13 +438,13 @@ KATSUYO_TABLE={
   "づ,文語上二段-ダ行":"xぢ:xぢ:xづ:xぢる:xぢれ:xぢよ",
   "づ,文語下二段-ダ行":"xで:xで:xづ:xでる:xでれ:xでよ",
   "す,五段-サ行":"xさ:xし:xす:xす:xせ:xせ",
+  "む,五段-マ行":"xま:xみ:xむ:xむ:xめ:xめ",
+  "む,文語上二段-マ行":"xみ:xみ:xむ:xみる:xみれ:xみよ",
+  "む,文語下二段-マ行":"xめ:xめ:xむ:xめる:xめれ:xめよ",
   "ふ,五段-ワア行":"xは:xひ:xふ:xふ:xへ:xへ",
   "ふ,文語四段-ハ行":"xは:xひ:xふ:xふ:xへ:xへ",
   "ふ,文語上二段-ハ行":"xひ:xひ:xふ:xひる:xひれ:xひよ",
   "ふ,文語下二段-ハ行":"xへ:xへ:xふ:xへる:xへれ:xへよ",
-  "む,五段-マ行":"xま:xみ:xむ:xむ:xめ:xめ",
-  "む,文語上二段-マ行":"xみ:xみ:xむ:xみる:xみれ:xみよ",
-  "む,文語下二段-マ行":"xめ:xめ:xむ:xめる:xめれ:xめよ",
   "つ,五段-タ行":"xた:xち:xつ:xつ:xて:xて",
   "つ,文語上二段-タ行":"xち:xち:xつ:xちる:xちれ:xちよ",
   "つ,文語下二段-タ行":"xて:xて:xつ:xてる:xてれ:xてよ",
@@ -455,7 +460,7 @@ def katsuyo_verb(form,lemma,xpos):
   v=lemma+","+xpos
   if v in VERB:
     return VERB[v].replace("x",form)
-  for g in "ずぶぐづすふむつきくる":
+  for g in "ずぶぐづすむふつきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
