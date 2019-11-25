@@ -194,9 +194,18 @@ def translate(kanbun,raw=False):
           continue
         k=s[j].xpos
         if k=="v,動詞,存在,存在":
-          continue
+          if s[j].lemma=="有" or s[j].lemma=="無":
+            continue
+          w="に"
         elif k=="v,動詞,行為,交流" or k=="v,動詞,行為,伝達":
-          w="の" if x=="iobj" else "と" if x=="ccomp" else "を"
+          w="と" if x=="ccomp" else "を"
+          if x=="obj":
+            v=s[i].xpos
+            if v.startswith("n,代名詞,人称,") or v.startswith("n,名詞,人,"):
+              w="に"
+            v=[t.deprel for t in s if t.head==s[j]]
+            if "iobj" in v:
+              w="と"
         elif k=="v,動詞,行為,移動":
           w="に"
         elif k=="v,動詞,行為,使役":
@@ -323,8 +332,12 @@ def translate(kanbun,raw=False):
   for s in d:
     for i in reversed(range(len(s))):
       if s[i].deprel=="flat:vv":
-        s.insert(i+1,UDKundokuToken(0,"す","_","AUX","_","_","aux","_","SpaceAfter=No"))
-        s[i+1].head=s[i].head
+        if len(s)-i==1:
+          s.append(UDKundokuToken(0,"す","_","AUX","_","_","aux","_","SpaceAfter=No"))
+          s[i+1].head=s[i].head
+        elif s[i+1].id!=0:
+          s.insert(i+1,UDKundokuToken(0,"す","_","AUX","_","_","aux","_","SpaceAfter=No"))
+          s[i+1].head=s[i].head
     for i in range(len(s)):
       if s[i].upos!="AUX"and s[i].upos!="VERB":
         continue
