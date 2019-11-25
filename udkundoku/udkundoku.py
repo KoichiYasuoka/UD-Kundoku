@@ -393,6 +393,8 @@ def translate(kanbun,raw=False):
         if u.lemma=="以":
           s[i].form="ゆえん"
           u.form="_"
+          if len(s)-i>1:
+            s[i].form="ゆえんの" if s[i+1].lemma=="者" else "ゆえん"
     for i in range(len(s)):
       if s[i].form=="ば" and s[i].id==0:
         x=s[i-1].upos
@@ -427,13 +429,9 @@ def translate(kanbun,raw=False):
   return UDKundokuEntry(kundoku)
 
 KATSUYO_TABLE={
-  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "ぶ,五段-バ行":"xば:xび:xぶ:xぶ:xべ:xべ",
   "ぶ,文語上二段-バ行":"xび:xび:xぶ:xびる:xびれ:xびよ",
   "ぶ,文語下二段-バ行":"xべ:xべ:xぶ:xべる:xべれ:xべよ",
-  "ぐ,五段-ガ行":"xが:xぎ:xぐ:xぐ:xげ:xげ",
-  "ぐ,文語上二段-ガ行":"xぎ:xぎ:xぐ:xぎる:xぎれ:xぎよ",
-  "ぐ,文語下二段-ガ行":"xげ:xげ:xぐ:xげる:xげれ:xげよ",
   "づ,五段-ダ行":"xだ:xぢ:xづ:xづ:xで:xで",
   "づ,文語上二段-ダ行":"xぢ:xぢ:xづ:xぢる:xぢれ:xぢよ",
   "づ,文語下二段-ダ行":"xで:xで:xづ:xでる:xでれ:xでよ",
@@ -448,6 +446,10 @@ KATSUYO_TABLE={
   "つ,五段-タ行":"xた:xち:xつ:xつ:xて:xて",
   "つ,文語上二段-タ行":"xち:xち:xつ:xちる:xちれ:xちよ",
   "つ,文語下二段-タ行":"xて:xて:xつ:xてる:xてれ:xてよ",
+  "ぐ,五段-ガ行":"xが:xぎ:xぐ:xぐ:xげ:xげ",
+  "ぐ,文語上二段-ガ行":"xぎ:xぎ:xぐ:xぎる:xぎれ:xぎよ",
+  "ぐ,文語下二段-ガ行":"xげ:xげ:xぐ:xげる:xげれ:xげよ",
+  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "き,文語形容詞-ク":"xから:xく:xし:xき:xけれ:xくせよ",
   "き,文語形容詞-シク":"xしから:xしく:xし:xしき:xしけれ:xしくせよ",
   "く,五段-カ行":"xか:xき:xく:xく:xけ:xけ",
@@ -460,7 +462,7 @@ def katsuyo_verb(form,lemma,xpos):
   v=lemma+","+xpos
   if v in VERB:
     return VERB[v].replace("x",form)
-  for g in "ずぶぐづすむふつきくる":
+  for g in "ぶづすむふつぐずきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
@@ -497,13 +499,15 @@ def katsuyo(sentence,ix):
       break
   else:
     return k[2]
-  if u.lemma=="爲" and u.xpos=="v,動詞,存在,存在":
+  if u.xpos=="v,動詞,存在,存在" and u.lemma=="爲":
     return k[1]
   m=u.form+","+u.upos
   if m in KATSUYO_NEXT:
     x=KATSUYO_NEXT[m].split(",")
     return k[int(x[0])]+x[1]
   if u.upos=="ADP" or u.upos=="AUX" or u.upos=="PART":
+    return k[3]
+  if t.deprel=="acl" and (u.upos=="NOUN" or u.upos=="PROPN"):
     return k[3]
   return k[1]+"て"
 
@@ -518,6 +522,7 @@ KATSUYO_NEXT={
   "易,VERB":"1,",
   "欲,AUX":"0,んと",
   "無,VERB":"3,こと",
+  "有,VERB":"3,",
   "被,AUX":"0,",
   "見,AUX":"0,",
   "難,VERB":"1,",
