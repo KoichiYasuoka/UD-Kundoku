@@ -33,6 +33,81 @@ class UDKundokuToken(object):
     r="\t".join([str(self.id),self.form,self.lemma,self.upos,self.xpos,self.feats,str(0 if self.head is self else self.head.id),self.deprel,self.deps,self.misc])
     return r if type(r) is str else r.encode("utf-8")
 
+class UDKundokuEntry(unidic2ud.UDPipeEntry):
+  def to_tree(self,BoxDrawingWidth=1,Japanese=True):
+    if not hasattr(self,"_tokens"):
+      return None
+    f=[[] for i in range(len(self))]
+    h=[0]
+    for i in range(1,len(self)):
+      if self[i].deprel=="root":
+        h.append(0)
+        continue
+      j=i+self[i].head.id-self[i].id
+      f[j].append(i)
+      h.append(j) 
+    d=[1 if f[i]==[] and abs(h[i]-i)==1 else -1 if h[i]==0 else 0 for i in range(len(self))]
+    while 0 in d:
+      for i,e in enumerate(d):
+        if e!=0:
+          continue
+        g=[d[j] for j in f[i]]
+        if 0 in g:
+          continue
+        k=h[i]
+        if 0 in [d[j] for j in range(min(i,k)+1,max(i,k))]:
+          continue
+        for j in range(min(i,k)+1,max(i,k)):
+          if j in f[i]:
+            continue
+          g.append(d[j]-1 if j in f[k] else d[j])
+        g.append(0)
+        d[i]=max(g)+1
+    m=max(d)
+    p=[[0]*(m*2) for i in range(len(self))]
+    for i in range(1,len(self)):
+      k=h[i]
+      if k==0:
+        continue
+      j=d[i]*2-1
+      p[min(i,k)][j]|=9
+      p[max(i,k)][j]|=5
+      for l in range(j):
+        p[k][l]|=3
+      for l in range(min(i,k)+1,max(i,k)):
+        p[l][j]|=12
+    u=[" ","\u2574","\u2576","\u2500","\u2575","\u2518","\u2514","\u2534","\u2577","\u2510","\u250C","\u252C","\u2502","\u2524","\u251C","\u253C","<"]
+    if Japanese:
+      import udkanbun.deprelja
+      r=udkanbun.deprelja.deprelja
+    else:
+      r={}
+    s=""
+    for i in range(1,len(self)):
+      if h[i]>0:
+        j=d[i]*2-2
+        while j>=0:
+          if p[i][j]>0:
+            break
+          p[i][j]|=3
+          j-=1
+        p[i][j+1]=16
+      w=self[i].form[0]
+      t="".join(u[j] for j in p[i])
+      if BoxDrawingWidth>1:
+        t=t.replace(" "," "*BoxDrawingWidth).replace("<"," "*(BoxDrawingWidth-1)+"<")
+      if self[i].deprel in r:
+        s+=w+" "+t+" "+self[i].deprel+"("+r[self[i].deprel]+")\n"
+      else:
+        s+=w+" "+t+" "+self[i].deprel+"\n"
+      if len(self[i].form)>1:
+        t="".join(u[((j&8)>>1)*3] for j in p[i])
+        if BoxDrawingWidth>1:
+          t=t.replace(" "," "*BoxDrawingWidth)
+        for w in self[i].form[1:]:
+          s+=(w+" "+t).rstrip()+"\n"
+    return s
+
 def load(MeCab=True):
   import udkanbun
   return udkanbun.load(MeCab)
@@ -40,7 +115,7 @@ def load(MeCab=True):
 def translate(kanbun,raw=False):
   import udkanbun.kaeriten
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
-# 同時移動ロジック
+# 同時移動
   n=[-1]*len(kanbun)
   for i,t in enumerate(k):
     if k[i]==[]:
@@ -104,12 +179,17 @@ def translate(kanbun,raw=False):
         s[i].id=0
       elif s[i].deprel=="nmod" or s[i].deprel=="det":
         j=s.index(s[i].head)
+        if j-i<1:
+          continue
         if j-i==1:
           s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
           continue
         x=[k for k in range(i+1,j) if s[k].id==0 or s[k].deprel=="root"]
         if x!=[]:
+          if s[i].deprel=="det" and s[i+1].id!=0:
+            s.insert(i+1,UDKundokuToken(0,"が","_","ADP","_","_","case","_","SpaceAfter=No"))
+            s[i+1].head=s[i]
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
         y={i,j}
@@ -286,12 +366,6 @@ def translate(kanbun,raw=False):
         t.form,t.upos=x[0],x[1]
       elif t.upos=="ADV" and t.lemma!="_":
         t.form+="に"
-      elif t.xpos.startswith("v,動詞,描写,"):
-        if len(s)-k>1:
-          if s[k+1].xpos=="p,接尾辞,*,*":
-            continue
-        t.form+="に"
-        t.upos="ADV"
 # PART CCONJ PRON チェック
   for s in d:
     for k,t in enumerate(s):
@@ -394,7 +468,7 @@ def translate(kanbun,raw=False):
     kundoku+="# text = "+"".join(t.form for t in s if t.form!="_")+"\n"+"\n".join(str(t) for t in s)+"\n\n"
   if raw:
     return kundoku
-  return unidic2ud.UniDic2UDEntry(kundoku)
+  return UDKundokuEntry(kundoku)
 
 KATSUYO_TABLE={
   "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
@@ -427,22 +501,25 @@ KATSUYO_TABLE={
 }
 
 def katsuyo_verb(form,lemma,xpos):
-  t=lemma+","+xpos
-  if t in VERB:
-    return VERB[t].replace("x",form)
+  v=lemma+","+xpos
+  if v in VERB:
+    return VERB[v].replace("x",form)
   for g in "ずぶぐづすふむつきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
       if t in KATSUYO_TABLE:
-        return KATSUYO_TABLE[t].replace("x",form)
+        VERB[v]=KATSUYO_TABLE[t]
+        return VERB[v].replace("x",form)
   if s[4].startswith("上一段-"):
-    return "x:x:xる:xる:xれ:xよ".replace("x",form)
-  if s[4].startswith("下一段-"):
-    return "x:x:xる:xる:xれ:xよ".replace("x",form)
-  if xpos.startswith("v,動詞,描写,"):
-    return "xなら:xなり:xなり:xなる:xなれ:xなれ".replace("x",form)
-  return "xせ:xし:xす:xする:xすれ:xせよ".replace("x",form)
+    VERB[v]="x:x:xる:xる:xれ:xよ"
+  elif s[4].startswith("下一段-"):
+    VERB[v]="x:x:xる:xる:xれ:xよ"
+  elif xpos.startswith("v,動詞,描写,"):
+    VERB[v]="xなら:xなり:xなり:xなる:xなれ:xなれ"
+  else:
+    VERB[v]="xせ:xし:xす:xする:xすれ:xせよ"
+  return VERB[v].replace("x",form)
 
 def katsuyo(sentence,ix):
   t=sentence[ix]
@@ -488,4 +565,5 @@ KATSUYO_NEXT={
   "見,AUX":"0,",
   "難,VERB":"1,",
   "非ず,AUX":"3,に",
+  "難,VERB":"1,",
 }
