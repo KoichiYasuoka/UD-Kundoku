@@ -85,10 +85,14 @@ def translate(kanbun,raw=False):
       i=k[i][0]
       c[i]=True
       t.insert(j,i)
-      if n[i]==i-1:
+      if n[i]==i+1:
+        c[i+1]=True
+        t.insert(j,i+1)
+      elif n[i]==i-1:
         i-=1
         c[i]=True
         t.insert(j,i)
+# 訓読配列初期化
   d,s=[],[]
   for i in reversed(range(len(t)-1)):
     if t[i]==0:
