@@ -1,6 +1,7 @@
 #! /usr/bin/python -i
 # coding=utf-8
 
+import udkanbun
 import unidic2ud
 if unidic2ud.dictlist().find("qkana\n")<0:
   import os
@@ -33,80 +34,11 @@ class UDKundokuToken(object):
     r="\t".join([str(self.id),self.form,self.lemma,self.upos,self.xpos,self.feats,str(0 if self.head is self else self.head.id),self.deprel,self.deps,self.misc])
     return r if type(r) is str else r.encode("utf-8")
 
-class UDKundokuEntry(unidic2ud.UDPipeEntry):
-  def to_tree(self,BoxDrawingWidth=1,Japanese=True):
-    if not hasattr(self,"_tokens"):
-      return None
-    f=[[] for i in range(len(self))]
-    h=[0]
-    for i in range(1,len(self)):
-      if self[i].deprel=="root":
-        h.append(0)
-        continue
-      j=i+self[i].head.id-self[i].id
-      f[j].append(i)
-      h.append(j) 
-    d=[1 if f[i]==[] and abs(h[i]-i)==1 else -1 if h[i]==0 else 0 for i in range(len(self))]
-    while 0 in d:
-      for i,e in enumerate(d):
-        if e!=0:
-          continue
-        g=[d[j] for j in f[i]]
-        if 0 in g:
-          continue
-        k=h[i]
-        if 0 in [d[j] for j in range(min(i,k)+1,max(i,k))]:
-          continue
-        for j in range(min(i,k)+1,max(i,k)):
-          if j in f[i]:
-            continue
-          g.append(d[j]-1 if j in f[k] else d[j])
-        g.append(0)
-        d[i]=max(g)+1
-    m=max(d)
-    p=[[0]*(m*2) for i in range(len(self))]
-    for i in range(1,len(self)):
-      k=h[i]
-      if k==0:
-        continue
-      j=d[i]*2-1
-      p[min(i,k)][j]|=9
-      p[max(i,k)][j]|=5
-      for l in range(j):
-        p[k][l]|=3
-      for l in range(min(i,k)+1,max(i,k)):
-        p[l][j]|=12
-    u=[" ","\u2574","\u2576","\u2500","\u2575","\u2518","\u2514","\u2534","\u2577","\u2510","\u250C","\u252C","\u2502","\u2524","\u251C","\u253C","<"]
-    if Japanese:
-      import udkanbun.deprelja
-      r=udkanbun.deprelja.deprelja
-    else:
-      r={}
-    s=""
-    for i in range(1,len(self)):
-      if h[i]>0:
-        j=d[i]*2-2
-        while j>=0:
-          if p[i][j]>0:
-            break
-          p[i][j]|=3
-          j-=1
-        p[i][j+1]=16
-      w=self[i].form[0]
-      t="".join(u[j] for j in p[i])
-      if BoxDrawingWidth>1:
-        t=t.replace(" "," "*BoxDrawingWidth).replace("<"," "*(BoxDrawingWidth-1)+"<")
-      if self[i].deprel in r:
-        s+=w+" "+t+" "+self[i].deprel+"("+r[self[i].deprel]+")\n"
-      else:
-        s+=w+" "+t+" "+self[i].deprel+"\n"
-      if len(self[i].form)>1:
-        t="".join(u[((j&8)>>1)*3] for j in p[i])
-        if BoxDrawingWidth>1:
-          t=t.replace(" "," "*BoxDrawingWidth)
-        for w in self[i].form[1:]:
-          s+=(w+" "+t).rstrip()+"\n"
-    return s
+class UDKundokuEntry(udkanbun.UDKanbunEntry):
+  def kaeriten(self):
+    return None
+  def to_tree(self,BoxDrawingWidth=1,kaeriten=False,Japanese=True):
+    return udkanbun.UDKanbunEntry.to_tree(self,BoxDrawingWidth,False,Japanese)
 
 def load(MeCab=True):
   import udkanbun
@@ -235,6 +167,8 @@ def translate(kanbun,raw=False):
         k=s[j].xpos
         if k=="v,動詞,行為,使役":
           w="せ"
+        elif k=="v,動詞,行為,伝達":
+          w="と"
         else:
           w="が"
         if j-i==1:
@@ -262,7 +196,7 @@ def translate(kanbun,raw=False):
         if k=="v,動詞,存在,存在":
           continue
         elif k=="v,動詞,行為,交流" or k=="v,動詞,行為,伝達":
-          w="を" if x=="iobj" else "と"
+          w="の" if x=="iobj" else "と" if x=="ccomp" else "を"
         elif k=="v,動詞,行為,移動":
           w="に"
         elif k=="v,動詞,行為,使役":
@@ -437,7 +371,7 @@ def translate(kanbun,raw=False):
         if s[i+1].lemma=="所":
           s[i].form,s[i+1].form="いわ","ゆる"
     for i in range(len(s)):
-      if s[i].lemma=="所" and s[i].upos=="PART":
+      if s[i].form=="所" and s[i].upos=="PART":
         u=s[i].head
         if u.lemma=="以":
           s[i].form="ゆえん"
@@ -541,19 +475,20 @@ def katsuyo(sentence,ix):
       break
   else:
     return k[2]
+  if u.lemma=="爲" and u.xpos=="v,動詞,存在,存在":
+    return k[1]
   m=u.form+","+u.upos
   if m in KATSUYO_NEXT:
     x=KATSUYO_NEXT[m].split(",")
     return k[int(x[0])]+x[1]
   if u.upos=="ADP" or u.upos=="AUX" or u.upos=="PART":
     return k[3]
-  if u.lemma=="爲" and u.xpos=="v,動詞,存在,存在":
-    return k[1]
   return k[1]+"て"
 
 KATSUYO_NEXT={
   "ず,AUX":"0,",
   "せ,ADP":"1,",
+  "と,ADP":"5,",
   "なし,AUX":"3,こと",
   "ば,ADP":"4,",
   "んとす,AUX":"0,",
