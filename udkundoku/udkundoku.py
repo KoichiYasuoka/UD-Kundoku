@@ -350,7 +350,7 @@ def translate(kanbun,raw=False):
         continue
       x=[t for t in s if t.head==s[i] and (t.deprel=="flat:vv" or t.xpos=="p,接尾辞,*,*")]
       if x==[]:
-        s[i].form=katsuyo(s,i)
+        s[i].form="況んや" if s[i].lemma=="況" and s[i].xpos=="v,動詞,行為,動作" else katsuyo(s,i)
 # よ vocative
   for s in d:
     for i in reversed(range(len(s))):
