@@ -117,6 +117,8 @@ def translate(kanbun,raw=False):
         j=s.index(s[i].head)
         if j-i<1:
           continue
+        if s[j].upos=="NUM":
+          continue
         if j-i==1:
           s.insert(j,UDKundokuToken(0,"の","_","ADP","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
