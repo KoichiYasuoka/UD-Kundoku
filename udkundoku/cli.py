@@ -56,7 +56,7 @@ def output(lzh,optu,optt,optj,width,sentence):
 def usage():
   from pkg_resources import get_distribution
   print("UD-Kundoku Version "+get_distribution("udkundoku").version,file=sys.stderr)
-  print("Usage: udkanbun [-u|-t|-t2|-j] file",file=sys.stderr)
+  print("Usage: udkundoku [-u|-t|-t2|-j] file",file=sys.stderr)
   print("  output format:",file=sys.stderr)
   print("    -u  Universal Dependencies CoNLL-U",file=sys.stderr)
   print("    -t  tree  (-t2  tree with BoxDrawingWidth=2)",file=sys.stderr)
