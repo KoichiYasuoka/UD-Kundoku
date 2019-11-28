@@ -314,7 +314,15 @@ def translate(kanbun,raw=False):
         x=ADV[i].split(":")
         t.form,t.upos=x[0],x[1]
       elif t.upos=="ADV" and t.lemma!="_":
-        t.form+="に"
+        x=QKANA.mecab(t.lemma).split(",")
+        if x[0]==t.lemma+"\t"+"副詞" or x[0]==t.lemma+"\t"+"接続詞":
+          k=x[7]
+          if k==t.lemma or not k.startswith(t.lemma):
+            k="".join(chr(c if c<12449 or c>12534 else c-96) for c in [ord(c) for c in x[6]])
+          ADV[i]=k+":ADV"
+          t.form=k
+        else:
+          t.form+="に"
 # PART CCONJ PRON チェック
   for s in d:
     for k,t in enumerate(s):
@@ -379,24 +387,24 @@ def translate(kanbun,raw=False):
           if f>0:
             k=katsuyo_verb(s[j].lemma,s[j].lemma,s[j].xpos).split(":")
             s[j].form=k[5]
-# 如何(いかん) 所謂(いわゆる) 所以(ゆえん) 名詞+ば
+# 所以(ゆゑん) 如何(いかん) 所謂(いはゆる) 名詞+ば
   for s in d:
+    for i in range(len(s)):
+      if s[i].lemma=="所" and s[i].upos=="PART":
+        u=s[i].head
+        if u.lemma=="以":
+          s[i].form="ゆゑん"
+          u.form="_"
+          if len(s)-i>1:
+            s[i].form="ゆゑんの" if s[i+1].lemma=="者" else "ゆゑん"
     for i in range(len(s)-1):
       k=s[i].lemma
       if k=="如" or k=="奈" or k=="若":
         if s[i+1].lemma=="何":
           s[i].form,s[i+1].form="いか","ん"
       elif k=="謂":
-        if s[i+1].lemma=="所":
-          s[i].form,s[i+1].form="いわ","ゆる"
-    for i in range(len(s)):
-      if s[i].form=="所" and s[i].upos=="PART":
-        u=s[i].head
-        if u.lemma=="以":
-          s[i].form="ゆえん"
-          u.form="_"
-          if len(s)-i>1:
-            s[i].form="ゆえんの" if s[i+1].lemma=="者" else "ゆえん"
+        if s[i+1].form=="所":
+          s[i].form,s[i+1].form="いは","ゆる"
     for i in range(len(s)):
       if s[i].form=="ば" and s[i].id==0:
         x=s[i-1].upos
@@ -438,6 +446,7 @@ KATSUYO_TABLE={
   "づ,文語上二段-ダ行":"xぢ:xぢ:xづ:xぢる:xぢれ:xぢよ",
   "づ,文語下二段-ダ行":"xで:xで:xづ:xでる:xでれ:xでよ",
   "す,五段-サ行":"xさ:xし:xす:xす:xせ:xせ",
+  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "む,五段-マ行":"xま:xみ:xむ:xむ:xめ:xめ",
   "む,文語上二段-マ行":"xみ:xみ:xむ:xみる:xみれ:xみよ",
   "む,文語下二段-マ行":"xめ:xめ:xむ:xめる:xめれ:xめよ",
@@ -451,7 +460,6 @@ KATSUYO_TABLE={
   "ぐ,五段-ガ行":"xが:xぎ:xぐ:xぐ:xげ:xげ",
   "ぐ,文語上二段-ガ行":"xぎ:xぎ:xぐ:xぎる:xぎれ:xぎよ",
   "ぐ,文語下二段-ガ行":"xげ:xげ:xぐ:xげる:xげれ:xげよ",
-  "ず,文語サ行変格":"xぜ:xじ:xず:xずる:xじれ:xぜよ",
   "き,文語形容詞-ク":"xから:xく:xし:xき:xけれ:xくせよ",
   "き,文語形容詞-シク":"xしから:xしく:xし:xしき:xしけれ:xしくせよ",
   "く,五段-カ行":"xか:xき:xく:xく:xけ:xけ",
@@ -464,7 +472,7 @@ def katsuyo_verb(form,lemma,xpos):
   v=lemma+","+xpos
   if v in VERB:
     return VERB[v].replace("x",form)
-  for g in "ぶづすむふつぐずきくる":
+  for g in "ぶづすずむふつぐきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
       t=g+","+s[4]
