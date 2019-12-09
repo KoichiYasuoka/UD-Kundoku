@@ -200,7 +200,7 @@ def translate(kanbun,raw=False):
           continue
         k=s[j].xpos
         if k=="v,動詞,存在,存在":
-          if s[j].lemma=="有" or s[j].lemma=="無":
+          if s[j].lemma=="有" or s[j].lemma=="無" or s[j].lemma=="在":
             continue
           w="に"
         elif k=="v,動詞,行為,伝達":
@@ -250,6 +250,9 @@ def translate(kanbun,raw=False):
               y=set(x)
               x=[k if k==i or k==j else x[k] for k in x]
             j=len([k for k in x if k==i])
+          if s[j-1].id==0:
+            s[h].form="_"
+            continue
           t=s.pop(h)
           t.id,t.form=0,w
           s.insert(j-1,t)
