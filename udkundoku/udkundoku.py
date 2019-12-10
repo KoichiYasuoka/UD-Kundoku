@@ -508,7 +508,7 @@ def katsuyo(sentence,ix):
   while len(sentence)-ix>1:
     ix+=1
     u=sentence[ix]
-    if u.form!="_":
+    if u.form!="_" and u.upos!="PUNCT":
       break
   else:
     return k[2]
