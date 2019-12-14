@@ -26,6 +26,9 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 11	得	得	VERB	v,動詞,行為,得失	_	5	parataxis	_	Gloss=get|SpaceAfter=No
 12	ず	不	AUX	v,副詞,否定,無界	Polarity=Neg	11	advmod	_	Gloss=not|SpaceAfter=No
 
+>>> print(t.sentence())
+虎の穴に入らずして虎の子を得ず
+
 >>> print(s.to_tree())
 不 <┐     advmod
 入 ─┴─┬─┐ root

@@ -39,6 +39,14 @@ class UDKundokuEntry(udkanbun.UDKanbunEntry):
     return None
   def to_tree(self,BoxDrawingWidth=1,kaeriten=False,Japanese=True):
     return udkanbun.UDKanbunEntry.to_tree(self,BoxDrawingWidth,False,Japanese)
+  def sentence(self):
+    r=""
+    for s in self:
+      if s.id==1:
+        r+="\n"
+      if s.form!="_":
+        r+=s.form
+    return r[1:]+"\n"
 
 def load(MeCab=True):
   import udkanbun
