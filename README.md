@@ -73,7 +73,7 @@ pip install udkundoku
 
 ## Installation for Cygwin64
 
-For installing in [Cygwin64](https://www.cygwin.com/install.html), make sure to get `gcc-g++` `git` `python37-pip` `python37-devel` `python37-cython` `swig` packages, and then:
+For installing in [Cygwin64](https://www.cygwin.com/install.html), make sure to get `gcc-g++` `git` `python37-pip` `python37-devel` `python37-cython` packages, and then:
 ```sh
 pip3.7 install git+https://github.com/KoichiYasuoka/mecab-cygwin64
 pip3.7 install udkundoku
