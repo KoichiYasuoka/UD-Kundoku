@@ -398,7 +398,7 @@ def translate(kanbun,raw=False):
           if f>0:
             k=katsuyo_verb(s[j].lemma,s[j].lemma,s[j].xpos).split(":")
             s[j].form=k[5]
-# 所以(ゆゑん) 如何(いかん) 所謂(いはゆる) 名詞+ば
+# 所以(ゆゑん) 如何(いかん) 所謂(いはゆる) 名詞+ず 名詞+ば
   for s in d:
     for i in range(len(s)):
       if s[i].lemma=="所" and s[i].upos=="PART":
@@ -417,7 +417,11 @@ def translate(kanbun,raw=False):
         if s[i+1].form=="所":
           s[i].form,s[i+1].form="いは","ゆる"
     for i in range(len(s)):
-      if s[i].form=="ば" and s[i].id==0:
+      if s[i].form in ["ざら","ずし","ず","ざる","ざれ"] and s[i].upos=="AUX":
+        x=s[i-1].upos
+        if x!="VERB" and x!="AUX":
+          s[i].form="なら"+s[i].form
+      elif s[i].form=="ば" and s[i].id==0:
         x=s[i-1].upos
         if x!="VERB" and x!="AUX":
           s[i].form="ならば"
