@@ -1,6 +1,8 @@
 import sys
 import udkundoku
 
+LZH={True:None,False:None}
+
 def main():
   argc=len(sys.argv)
   i=w=1
@@ -23,22 +25,29 @@ def main():
       break
     i+=1
   else:
-    lzh=udkundoku.load(True)
     while True:
       try:
         s=input()
       except:
         return
-      print(output(lzh,optu,optt,optj,w,s),end="")
-  lzh=udkundoku.load(True)
+      print(output(optu,optt,optj,w,s),end="")
   while i<argc:
     f=open(sys.argv[i],"r",encoding="utf-8")
     s=f.read()
     f.close()
-    print(output(lzh,optu,optt,optj,w,s),end="")
+    print(output(optu,optt,optj,w,s),end="")
     i+=1
 
-def output(lzh,optu,optt,optj,width,sentence):
+def output(optu,optt,optj,width,sentence):
+  seg=False
+  if sentence.find("\u3001")<0 and sentence.find("\u3002")<0:
+    r=sentence.split("\n")
+    if len(r)<10:
+      if max(len(t) for t in r)>9:
+        seg=True
+  if LZH[seg]==None:
+    LZH[seg]=udkundoku.load(MeCab=True,Danku=seg)
+  lzh=LZH[seg]
   if optu:
     if optt:
       return udkundoku.translate(lzh(sentence)).to_svg()

@@ -48,9 +48,9 @@ class UDKundokuEntry(udkanbun.UDKanbunEntry):
         r+=s.form
     return r[1:]+"\n"
 
-def load(MeCab=True):
+def load(MeCab=True,Danku=False):
   import udkanbun
-  return udkanbun.load(MeCab)
+  return udkanbun.load(MeCab,Danku)
 
 def translate(kanbun,raw=False):
   import udkanbun.kaeriten
