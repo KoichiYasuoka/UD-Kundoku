@@ -17,14 +17,16 @@ class qkanaInstall(install):
         import subprocess
         subprocess.check_call(["udcabocha","--download=qkana"])
     except:
-      from pip._internal.models.link import Link
-      from pip._internal.download import unpack_url
-      unpack_url(Link(QKANA_URL),"build/lib/udkundoku/qkana")
+      import os,urllib.request,zipfile,glob
+      f,h=urllib.request.urlretrieve(QKANA_URL)
+      with zipfile.ZipFile(f) as z:
+        z.extractall("build")
+      os.renames(glob.glob("build/UniDic-qkana*")[0],"build/lib/udkundoku/qkana")
     install.run(self)
 
 setuptools.setup(
   name="udkundoku",
-  version="0.7.1",
+  version="0.7.2",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
