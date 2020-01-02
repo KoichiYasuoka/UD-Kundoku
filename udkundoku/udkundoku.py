@@ -369,7 +369,7 @@ def translate(kanbun,raw=False):
       j=s[i].deprel
       if j=="amod" or j=="flat:vv":
         continue
-      x=[t for t in s if t.head==s[i] and (t.deprel=="flat:vv" or t.xpos=="p,接尾辞,*,*")]
+      x=[t for t in s if t.head==s[i] and (t.deprel=="flat:vv" or (t.lemma!="乎" and t.xpos=="p,接尾辞,*,*"))]
       if x==[]:
         s[i].form="況んや" if s[i].lemma=="況" and s[i].xpos=="v,動詞,行為,動作" else katsuyo(s,i)
 # よ vocative
@@ -542,6 +542,7 @@ KATSUYO_NEXT={
   "と,ADP":"5,",
   "なし,AUX":"3,こと",
   "ば,ADP":"4,",
+  "や,PART":"2,",
   "んとす,AUX":"0,",
   "得,AUX":"3,を",
   "易,VERB":"1,",
