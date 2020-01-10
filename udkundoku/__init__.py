@@ -1,4 +1,4 @@
-from .udkundoku import load,translate
+from .udkundoku import load,rearrange,translate
 
-__all__=[ load,translate ]
+__all__=[ load,rearrange,translate ]
 

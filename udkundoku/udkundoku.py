@@ -52,7 +52,7 @@ def load(MeCab=True,Danku=False):
   import udkanbun
   return udkanbun.load(MeCab,Danku)
 
-def translate(kanbun,raw=False):
+def rearrange(kanbun):
   import udkanbun.kaeriten
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
 # 同時移動
@@ -115,6 +115,10 @@ def translate(kanbun,raw=False):
     for j,t in enumerate(s):
       w[j].head=w[s.index(t.head)]
     d[i]=w
+  return d
+
+def translate(kanbun,raw=False):
+  d=rearrange(kanbun)
 # の SCONJ,nmod,det
   for s in d:
     for i in reversed(range(len(s))):
