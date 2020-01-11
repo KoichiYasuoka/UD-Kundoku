@@ -52,7 +52,7 @@ def load(MeCab=True,Danku=False):
   import udkanbun
   return udkanbun.load(MeCab,Danku)
 
-def rearrange(kanbun):
+def rearrange(kanbun,matrix=False):
   import udkanbun.kaeriten
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
 # 同時移動
@@ -100,7 +100,7 @@ def rearrange(kanbun):
         i-=1
         c[i]=True
         t.insert(j,i)
-# 訓読配列初期化
+# 訓読配列作成
   d,s=[],[]
   for i in reversed(range(len(t)-1)):
     if t[i]==0:
@@ -114,11 +114,18 @@ def rearrange(kanbun):
       w.append(UDKundokuToken(t.id,t.form,t.lemma,t.upos,t.xpos,t.feats,t.deprel,t.deps,t.misc))
     for j,t in enumerate(s):
       w[j].head=w[s.index(t.head)]
+    for j,t in enumerate(w):
+      t.id=j+1
     d[i]=w
-  return d
+  if matrix:
+    return d
+  s=""
+  for w in d:
+    s+="\n".join(str(t) for t in w)+"\n\n"
+  return UDKundokuEntry(s)
 
 def translate(kanbun,raw=False):
-  d=rearrange(kanbun)
+  d=rearrange(kanbun,True)
 # の SCONJ,nmod,det
   for s in d:
     for i in reversed(range(len(s))):
