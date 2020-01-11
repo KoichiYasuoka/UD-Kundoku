@@ -89,3 +89,4 @@ Use `python3.7` command in [Cygwin](https://www.cygwin.com/install.html) instead
 
 Koichi Yasuoka (安岡孝一)
 
+![不入虎穴不得虎子](https://raw.githubusercontent.com/KoichiYasuoka/UD-Kundoku/master/example.png)
