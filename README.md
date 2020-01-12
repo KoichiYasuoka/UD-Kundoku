@@ -63,6 +63,15 @@ You can simply use `udkundoku` on the command line:
 echo 不入虎穴不得虎子 | udkundoku -j
 ```
 
+## HTTP-server usage
+
+```sh
+python -m udkundoku.server 5000
+```
+Try to connect `http://127.0.0.1:5000` with your local browser. Input a Classical Chinese sentence there and push 解析-button (at least) three times.
+
+![不入虎穴不得虎子](https://raw.githubusercontent.com/KoichiYasuoka/UD-Kundoku/master/example.png)
+
 ## Installation for Linux
 
 Tar-ball is available for Linux, and is installed by default when you use `pip`:
@@ -94,4 +103,3 @@ Koichi Yasuoka (安岡孝一)
 * 安岡孝一: [漢文の依存文法解析と返り点の関係について](http://hdl.handle.net/2433/235609), 日本漢字学会第1回研究大会予稿集 (2018年12月1日), pp.33-48.
 * 安岡孝一: [漢日英Universal Dependencies平行コーパスとその差異](http://hdl.handle.net/2433/245218), 人文科学とコンピュータシンポジウム「じんもんこん2019」論文集 (2019年12月), pp.43-50.
 
-![不入虎穴不得虎子](https://raw.githubusercontent.com/KoichiYasuoka/UD-Kundoku/master/example.png)
