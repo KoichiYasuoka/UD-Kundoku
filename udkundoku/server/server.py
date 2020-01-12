@@ -23,20 +23,27 @@ class UDKundokuRequestHandler(BaseHTTPRequestHandler):
       f.close()
       t="application/javascript"
     elif p.endswith(".txt"):
-      s=unquote(p[:-6])
-      if self.last_string!=s:
-        self.last_string=s
-        self.last_UD=LZH(s)
-      if p.endswith(".0.txt"):
-        r=str(self.last_UD)
-      elif p.endswith(".1.txt"):
-        r=str(udkundoku.rearrange(self.last_UD))
-      elif p.endswith(".2.txt"):
-        r=udkundoku.translate(self.last_UD,raw=True)
+      if p.startswith("%"):
+        s=unquote(p[:-6])
+        if self.last_string!=s:
+          self.last_string=s
+          self.last_UD=LZH(s)
+        if p.endswith(".0.txt"):
+          r=str(self.last_UD)
+        elif p.endswith(".1.txt"):
+          r=str(udkundoku.rearrange(self.last_UD))
+        elif p.endswith(".2.txt"):
+          r=udkundoku.translate(self.last_UD,raw=True)
+        else:
+          r=""
+          self.last_string=None
       else:
         r=""
         self.last_string=None
       t="text/plain;charset=UTF-8";
+    elif p.endswith(".ico"):
+      self.send_response(HTTPStatus.NOT_FOUND)
+      return
     else:
       f=open(os.path.join(PACKAGE_DIR,"index.html"),"r",encoding="utf-8")
       r=f.read()

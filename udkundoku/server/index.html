@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>UD-Kundoku miniserver</title>
+<title>UD-Kundoku HTTP-server</title>
 <script src="conllusvgview.js"></script>
 <script src="conllusvgload.js"></script>
 <script>
@@ -24,9 +24,10 @@ function kaiseki(textid,queryid){
 </script>
 </head>
 <body onresize="conllusvg.rewriteAll()">
-<input type="text" size=30 id="query" style="font-size:24pt" />
-<input type="button" value="解析" onclick="kaiseki('conllu','query')" style="font:22pt MS-Gothic" />
-<br />
+<span style="font-size:24pt">
+<input type="text" size=30 id="query" style="font-size:100%" />
+<button onclick="kaiseki('conllu','query')" style="font-size:100%">解析</button>
+</span><br />
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" onload="conllusvg.view(this,'conllu')">
 <text id="conllu" fill="none" visibility="hidden">
 </text>
