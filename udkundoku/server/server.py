@@ -22,23 +22,20 @@ class UDKundokuRequestHandler(BaseHTTPRequestHandler):
       r=f.read()
       f.close()
       t="application/javascript"
-    elif p.startswith("0."):
-      s=unquote(p[2:])
+    elif p.endswith(".txt"):
+      s=unquote(p[:-6])
       if self.last_string!=s:
+        self.last_string=s
         self.last_UD=LZH(s)
-      r=str(self.last_UD)
-      t="text/plain;charset=UTF-8";
-    elif p.startswith("1."):
-      s=unquote(p[2:])
-      if self.last_string!=s:
-        self.last_UD=LZH(s)
-      r=str(udkundoku.rearrange(self.last_UD))
-      t="text/plain;charset=UTF-8";
-    elif p.startswith("2."):
-      s=unquote(p[2:])
-      if self.last_string!=s:
-        self.last_UD=LZH(s)
-      r=udkundoku.translate(self.last_UD,raw=True)
+      if p.endswith(".0.txt"):
+        r=str(self.last_UD)
+      elif p.endswith(".1.txt"):
+        r=str(udkundoku.rearrange(self.last_UD))
+      elif p.endswith(".2.txt"):
+        r=udkundoku.translate(self.last_UD,raw=True)
+      else:
+        r=""
+        self.last_string=None
       t="text/plain;charset=UTF-8";
     else:
       f=open(os.path.join(PACKAGE_DIR,"index.html"),"r",encoding="utf-8")

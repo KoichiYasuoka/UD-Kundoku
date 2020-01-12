@@ -19,7 +19,7 @@ function kaiseki(textid,queryid){
   else
     typenum=(typenum+1)%3;
   lastquery=q;
-  conllusvg.loadRemote(textid,"/"+typenum+"."+encodeURIComponent(q),false);
+  conllusvg.loadRemote(textid,encodeURIComponent(q)+"."+typenum+".txt",false);
 }
 </script>
 </head>
