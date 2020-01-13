@@ -182,7 +182,7 @@ def translate(kanbun,raw=False):
           else:
             s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
             s[j].head=s[i]
-# せ の xcomp
+# せ と が xcomp
   for s in d:
     for i in reversed(range(len(s))):
       if s[i].deprel=="xcomp":
@@ -197,7 +197,7 @@ def translate(kanbun,raw=False):
         else:
           w="が"
         if j-i==1:
-          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s.insert(j,UDKundokuToken(0,w,"_","SCONJ","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
           continue
         x=[i if k<=i else j if k>=j else s.index(s[k].head) for k in range(len(s))]
@@ -207,7 +207,7 @@ def translate(kanbun,raw=False):
           x=[k if k==i or k==j else x[k] for k in x]
         j=len([k for k in x if k==i])
         if s[j-1].id!=0:
-          s.insert(j,UDKundokuToken(0,w,"_","ADP","_","_","case","_","SpaceAfter=No"))
+          s.insert(j,UDKundokuToken(0,w,"_","SCONJ","_","_","case","_","SpaceAfter=No"))
           s[j].head=s[i]
 # を に と obj ccomp iobj
   for s in d:
@@ -240,7 +240,11 @@ def translate(kanbun,raw=False):
         elif k=="v,動詞,行為,使役":
           w="をして"
         elif k=="v,動詞,行為,分類":
-          w="が" if x=="ccomp" else "の" 
+          w="の"
+          if x=="ccomp":
+            w="が"
+          elif x=="obj" and s[i].upos=="VERB":
+            w="が"
         else:
           w="に" if x=="iobj" else "を"
         if j-i==1:
@@ -553,8 +557,9 @@ def katsuyo(sentence,ix):
 
 KATSUYO_NEXT={
   "ず,AUX":"0,",
-  "せ,ADP":"1,",
-  "と,ADP":"5,",
+  "せ,SCONJ":"1,",
+  "と,ADP":"2,",
+  "と,SCONJ":"5,",
   "なし,AUX":"3,こと",
   "ば,ADP":"4,",
   "や,PART":"2,",
