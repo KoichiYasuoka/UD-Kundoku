@@ -231,6 +231,10 @@ def translate(kanbun,raw=False):
             v=[t.deprel for t in s if t.head==s[j]]
             if "iobj" in v:
               w="と"
+            elif "aux" in v:
+              v=[t.lemma for t in s if t.head==s[j] and t.deprel=="aux"]
+              if "可" in v:
+                w="と"
         elif k=="v,動詞,行為,移動":
           w="に"
         elif k=="v,動詞,行為,使役":
