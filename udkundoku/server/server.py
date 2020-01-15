@@ -6,10 +6,12 @@ from http.server import BaseHTTPRequestHandler
 from http import HTTPStatus
 from urllib.parse import unquote
 import udkundoku
+import unidic2ud
 
 PACKAGE_DIR=os.path.abspath(os.path.dirname(__file__))
 VERSION="HTTP UD-Kundoku/"+get_distribution("udkundoku").version
 LZH=udkundoku.load()
+QKANA=unidic2ud.load("qkana")
 
 class UDKundokuRequestHandler(BaseHTTPRequestHandler):
   server_version=VERSION
@@ -28,12 +30,24 @@ class UDKundokuRequestHandler(BaseHTTPRequestHandler):
         if self.last_string!=s:
           self.last_string=s
           self.last_UD=LZH(s)
+          self.translate=""
         if p.endswith(".0.txt"):
           r=str(self.last_UD)
         elif p.endswith(".1.txt"):
           r=str(udkundoku.rearrange(self.last_UD))
         elif p.endswith(".2.txt"):
           r=udkundoku.translate(self.last_UD,raw=True)
+          i=r.index("# text = ")
+          self.translate=r[i+9:r.index("\n",i)]
+        elif p.endswith(".3.txt"):
+          r=self.translate
+          if not r.endswith("\n"):
+            if r=="":
+              r=udkundoku.translate(self.last_UD,raw=True)
+              i=r.index("# text = ")
+              r=r[i+9:r.index("\n",i)]
+            r=QKANA(r,raw=True)
+          self.translate=r
         else:
           r=""
           self.last_string=None
