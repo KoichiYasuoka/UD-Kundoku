@@ -17,7 +17,8 @@ class qkanaInstall(install):
         import subprocess
         subprocess.check_call(["unidic2ud","--download=qkana"])
     except:
-      import os,urllib.request,zipfile,glob
+      import os,ssl,urllib.request,zipfile,glob
+      ssl._create_default_https_context=ssl._create_unverified_context
       f,h=urllib.request.urlretrieve(QKANA_URL)
       with zipfile.ZipFile(f) as z:
         z.extractall("build")
@@ -26,7 +27,7 @@ class qkanaInstall(install):
 
 setuptools.setup(
   name="udkundoku",
-  version="0.9.1",
+  version="0.9.2",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
