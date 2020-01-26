@@ -219,7 +219,7 @@ def translate(kanbun,raw=False):
           continue
         k=s[j].xpos
         if k=="v,動詞,存在,存在":
-          if s[j].lemma=="有" or s[j].lemma=="無" or s[j].lemma=="在":
+          if s[j].lemma=="有" or s[j].lemma=="無":
             continue
           w="に"
         elif k=="v,動詞,行為,伝達":
