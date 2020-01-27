@@ -57,11 +57,7 @@ def rearrange(kanbun,matrix=False):
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
 # 同時移動
   n=[-1]*len(kanbun)
-  for i,t in enumerate(k):
-    if k[i]==[]:
-      continue
-    if len(k)-i==1:
-      continue
+  for i in range(len(kanbun)-1):
     if kanbun[i+1].id==1:
       continue
     if kanbun[i].lemma=="所" and kanbun[i+1].lemma=="以":
