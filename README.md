@@ -56,7 +56,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 得 ─┬───┘<┘ parataxis(隣接表現)
 ず <┘       advmod(連用修飾語)
 ```
-`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `udkundoku.rearrange()` is called to rearrange Classical Chinese into Japanese word-order inside `udkundoku.translate()`. `to_tree()` and `to_svg()` are borrowed from those of UD-Kanbun.
+`udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `udkundoku.reorder()` is called to rearrange Classical Chinese into Japanese word-order inside `udkundoku.translate()`. `to_tree()` and `to_svg()` are borrowed from those of UD-Kanbun.
 
 You can simply use `udkundoku` on the command line:
 ```sh

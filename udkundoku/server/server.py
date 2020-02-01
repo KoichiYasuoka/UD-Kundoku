@@ -34,7 +34,7 @@ class UDKundokuRequestHandler(BaseHTTPRequestHandler):
         if p.endswith(".0.txt"):
           r=str(self.last_UD)
         elif p.endswith(".1.txt"):
-          r=str(udkundoku.rearrange(self.last_UD))
+          r=str(udkundoku.reorder(self.last_UD))
         elif p.endswith(".2.txt"):
           r=udkundoku.translate(self.last_UD,raw=True)
           i=r.index("# text = ")
