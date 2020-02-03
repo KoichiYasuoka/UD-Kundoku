@@ -436,6 +436,10 @@ def translate(kanbun,raw=False):
         x=s[i-1].upos
         if x!="VERB" and x!="AUX":
           s[i].form="なら"+s[i].form
+      elif s[i].lemma=="非" and s[i].upos=="AUX":
+        x=s[i-1].upos
+        if x!="VERB" and x!="AUX":
+          s[i].form="に"+s[i].form
       elif s[i].form=="ば" and s[i].id==0:
         x=s[i-1].upos
         if x!="VERB" and x!="AUX":
@@ -551,6 +555,8 @@ def katsuyo(sentence,ix):
     return k[3]
   if t.deprel=="acl" and (u.upos=="NOUN" or u.upos=="PROPN"):
     return k[3]
+  if k[1].endswith("く"):
+    return k[1]
   return k[1]+"て"
 
 KATSUYO_NEXT={
