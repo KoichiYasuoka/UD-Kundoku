@@ -382,8 +382,11 @@ def translate(kanbun,raw=False):
       if s[i].upos!="AUX"and s[i].upos!="VERB":
         continue
       j=s[i].deprel
-      if j=="amod" or j=="flat:vv":
+      if j=="flat:vv":
         continue
+      if j=="amod":
+        if i<s.index(s[i].head):
+          continue
       x=[t for t in s if t.head==s[i] and (t.deprel=="flat:vv" or (t.lemma!="乎" and t.xpos=="p,接尾辞,*,*"))]
       if x==[]:
         s[i].form="況んや" if s[i].lemma=="況" and s[i].xpos=="v,動詞,行為,動作" else katsuyo(s,i)
