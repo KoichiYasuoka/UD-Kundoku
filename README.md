@@ -17,13 +17,13 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 2	の	_	ADP	_	_	1	case	_	SpaceAfter=No
 3	穴	穴	NOUN	n,名詞,固定物,地形	Case=Loc	5	obj	_	Gloss=cave|SpaceAfter=No
 4	に	_	ADP	_	_	3	case	_	SpaceAfter=No
-5	入ら	入	VERB	v,動詞,行為,移動	_	0	root	_	Gloss=enter|SpaceAfter=No
+5	入ら	入	VERB	v,動詞,行為,移動	_	11	advcl	_	Gloss=enter|SpaceAfter=No
 6	ずして	不	AUX	v,副詞,否定,無界	Polarity=Neg	5	advmod	_	Gloss=not|SpaceAfter=No
 7	虎	虎	NOUN	n,名詞,主体,動物	_	9	nmod	_	Gloss=tiger|SpaceAfter=No
 8	の	_	ADP	_	_	7	case	_	SpaceAfter=No
 9	子	子	NOUN	n,名詞,人,関係	_	11	obj	_	Gloss=child|SpaceAfter=No
 10	を	_	ADP	_	_	9	case	_	SpaceAfter=No
-11	得	得	VERB	v,動詞,行為,得失	_	5	parataxis	_	Gloss=get|SpaceAfter=No
+11	得	得	VERB	v,動詞,行為,得失	_	0	root	_	Gloss=get|SpaceAfter=No
 12	ず	不	AUX	v,副詞,否定,無界	Polarity=Neg	11	advmod	_	Gloss=not|SpaceAfter=No
 
 >>> print(t.sentence())
@@ -31,11 +31,11 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 
 >>> print(s.to_tree())
 不 <┐     advmod
-入 ─┴─┬─┐ root
+入 ─┴─┐<┐ advcl
 虎 <┐ │ │ nmod
 穴 ─┘<┘ │ obj
 不 <┐   │ advmod
-得 ─┴─┐<┘ parataxis
+得 ─┴─┬─┘ root
 虎 <┐ │   nmod
 子 ─┘<┘   obj
 
@@ -44,7 +44,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 の <┘ │     case(格表示)
 穴 ─┬─┘<┐   obj(目的語)
 に <┘   │   case(格表示)
-入 ─┬───┴─┐ root(親)
+入 ─┬───┘<┐ advcl(連用修飾節)
 ら  │     │
 ず <┘     │ advmod(連用修飾語)
 し        │
@@ -53,7 +53,7 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 の <┘ │   │ case(格表示)
 子 ─┬─┘<┐ │ obj(目的語)
 を <┘   │ │ case(格表示)
-得 ─┬───┘<┘ parataxis(隣接表現)
+得 ─┬───┴─┘ root(親)
 ず <┘       advmod(連用修飾語)
 ```
 `udkundoku.load()` is an alias for `udkanbun.load()` of [UD-Kanbun](https://github.com/KoichiYasuoka/UD-Kanbun/). `udkundoku.translate()` is a transcriptive converter from Classical Chinese (under Universal Dependencies of UD-Kanbun) into Modern Japanese (under Universal Dependencies of [UniDic2UD](https://github.com/KoichiYasuoka/UniDic2UD/)). `udkundoku.reorder()` is called to rearrange Classical Chinese into Japanese word-order inside `udkundoku.translate()`. `to_tree()` and `to_svg()` are borrowed from those of UD-Kanbun.
