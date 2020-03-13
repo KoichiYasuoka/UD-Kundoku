@@ -511,6 +511,12 @@ def katsuyo_verb(form,lemma,xpos):
   v=lemma+","+xpos
   if v in VERB:
     return VERB[v].replace("x",form)
+  s=QKANA.mecab(lemma).split(",")
+  if s[0]==lemma+"\t動詞":
+    t=s[12][1:]+","+s[4]
+    if t in KATSUYO_TABLE:
+      VERB[v]=KATSUYO_TABLE[t]
+      return VERB[v].replace("x",form)
   for g in "ぶづすずむふつぐきくる":
     s=QKANA.mecab(lemma+g).split(",")
     if s[0].startswith(lemma+g+"\t"):
