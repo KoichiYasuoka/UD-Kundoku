@@ -54,7 +54,7 @@ class UDKundokuRequestHandler(BaseHTTPRequestHandler):
       else:
         r=""
         self.last_string=None
-      t="text/plain;charset=UTF-8";
+      t="text/plain;charset=UTF-8"
     elif p.endswith(".ico"):
       self.send_response(HTTPStatus.NOT_FOUND)
       return
@@ -62,7 +62,7 @@ class UDKundokuRequestHandler(BaseHTTPRequestHandler):
       f=open(os.path.join(PACKAGE_DIR,"index.html"),"r",encoding="utf-8")
       r=f.read()
       f.close()
-      t="text/html;charset=UTF-8";
+      t="text/html;charset=UTF-8"
     b=r.encode("utf-8")
     self.send_response(HTTPStatus.OK)
     self.send_header("Content-Type",t)
