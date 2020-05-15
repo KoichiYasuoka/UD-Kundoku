@@ -95,6 +95,8 @@ Use `python3.7` command in [Cygwin](https://www.cygwin.com/install.html) instead
 !pip install udkundoku
 ```
 
+Try [notebook](https://colab.research.google.com/github/KoichiYasuoka/UD-Kundoku/blob/master/udkundoku.ipynb) for Google Colaboratory.
+
 ## Author
 
 Koichi Yasuoka (安岡孝一)
