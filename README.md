@@ -30,30 +30,30 @@ Classical Chinese to Modern Japanese Translator, working on [Universal Dependenc
 虎の穴に入らずして虎の子を得ず
 
 >>> print(s.to_tree())
-不 <╗     advmod
-入 ═╩═╦═╗ root
-虎 <╗ ║ ║ nmod
-穴 ═╝<╝ ║ obj
-不 <╗   ║ advmod
-得 ═╩═╗<╝ parataxis
-虎 <╗ ║   nmod
-子 ═╝<╝   obj
+不 <════╗   advmod
+入 ═══╗═╝═╗ root
+虎 <╗ ║   ║ nmod
+穴 ═╝<╝   ║ obj
+不 <════╗ ║ advmod
+得 ═══╗═╝<╝ parataxis
+虎 <╗ ║     nmod
+子 ═╝<╝     obj
 
 >>> print(t.to_tree())
 虎 ═╗<╗     nmod(体言による連体修飾語)
 の <╝ ║     case(格表示)
-穴 ═╦═╝<╗   obj(目的語)
+穴 ═╗═╝<╗   obj(目的語)
 に <╝   ║   case(格表示)
-入 ═╦═══╩═╗ root(親)
+入 ═╗═══╝═╗ root(親)
 ら  ║     ║
 ず <╝     ║ advmod(連用修飾語)
 し        ║
 て        ║
 虎 ═╗<╗   ║ nmod(体言による連体修飾語)
 の <╝ ║   ║ case(格表示)
-子 ═╦═╝<╗ ║ obj(目的語)
+子 ═╗═╝<╗ ║ obj(目的語)
 を <╝   ║ ║ case(格表示)
-得 ═╦═══╝<╝ parataxis(隣接表現)
+得 ═╗═══╝<╝ parataxis(隣接表現)
 ず <╝       advmod(連用修飾語)
 ```
 
