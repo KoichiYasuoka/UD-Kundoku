@@ -103,5 +103,6 @@ Koichi Yasuoka (安岡孝一)
 
 ## References
 
-* 安岡孝一: [漢文自動訓読ツールUD-Kundokuの開発](http://hdl.handle.net/2433/245919), 東洋学へのコンピュータ利用, 第32回研究セミナー (2020年3月6日), pp.3-25.
+* 安岡孝一: [漢文の依存文法解析にもとづく自動訓読システム](http://kanji.zinbun.kyoto-u.ac.jp/~yasuoka/publications/2020-11-28.pdf), 日本漢字学会第3回研究大会予稿集(2020年11月28日).
+* 安岡孝一: [漢文の依存文法解析と返り点の関係について](http://kanji.zinbun.kyoto-u.ac.jp/~yasuoka/publications/2018-12-01.pdf), 日本漢字学会第1回研究大会予稿集(2018年12月1日), pp.33-48.
 
