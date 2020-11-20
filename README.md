@@ -103,6 +103,6 @@ Koichi Yasuoka (安岡孝一)
 
 ## References
 
-* 安岡孝一: [漢文の依存文法解析にもとづく自動訓読システム](http://kanji.zinbun.kyoto-u.ac.jp/~yasuoka/publications/2020-11-28.pdf), 日本漢字学会第3回研究大会予稿集(2020年11月28日), pp.60-73.
-* 安岡孝一: [漢文の依存文法解析と返り点の関係について](http://kanji.zinbun.kyoto-u.ac.jp/~yasuoka/publications/2018-12-01.pdf), 日本漢字学会第1回研究大会予稿集(2018年12月1日), pp.33-48.
+* 安岡孝一: [漢文の依存文法解析にもとづく自動訓読システム](http://kanji.zinbun.kyoto-u.ac.jp/~yasuoka/publications/2020-11-28.pdf), 日本漢字学会第3回研究大会予稿集(2020年11月), pp.60-73.
+* 安岡孝一: [漢文の依存文法解析と返り点の関係について](http://kanji.zinbun.kyoto-u.ac.jp/~yasuoka/publications/2018-12-01.pdf), 日本漢字学会第1回研究大会予稿集(2018年12月), pp.33-48.
 
