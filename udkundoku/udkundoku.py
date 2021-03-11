@@ -49,11 +49,13 @@ class UDKundokuEntry(udkanbun.UDKanbunEntry):
     return r[1:]+"\n"
 
 def load(MeCab=True,Danku=False):
-  import udkanbun
   return udkanbun.load(MeCab,Danku)
 
 def reorder(kanbun,matrix=False):
   import udkanbun.kaeriten
+  if type(kanbun)!=udkanbun.UDKanbunEntry:
+    import deplacy
+    kanbun=udkanbun.UDKanbunEntry(deplacy.to_conllu(kanbun))
   k=udkanbun.kaeriten.kaeriten(kanbun,True)
 # 同時移動
   n=[-1]*len(kanbun)
