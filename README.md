@@ -79,7 +79,7 @@ Tar-ball is available for Linux, and is installed by default when you use `pip`:
 ```sh
 pip install udkundoku
 ```
-[旧仮名口語UniDic](https://unidic.ninjal.ac.jp/download_all#unidic_qkana) is automatically downloaded for UniDic2UD.
+[旧仮名口語UniDic](https://ccd.ninjal.ac.jp/unidic/download_all#unidic_qkana) is automatically downloaded for UniDic2UD.
 
 ## Installation for Cygwin
 
