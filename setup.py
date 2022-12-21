@@ -9,7 +9,7 @@ URL="https://github.com/KoichiYasuoka/UD-Kundoku"
 
 setuptools.setup(
   name="udkundoku",
-  version="2.2.6",
+  version="2.2.7",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
