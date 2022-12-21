@@ -15,7 +15,7 @@ QKANA=unidic2ud.UniDic2UD("qkana",None)
 
 from udkundoku.adp import ADP
 from udkundoku.adv import ADV
-from udkundoku.aux import AUX
+from udkundoku.auxiliary import AUX
 from udkundoku.part import PART
 from udkundoku.verb import VERB
 
