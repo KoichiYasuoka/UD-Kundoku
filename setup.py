@@ -9,7 +9,7 @@ URL="https://github.com/KoichiYasuoka/UD-Kundoku"
 
 setuptools.setup(
   name="udkundoku",
-  version="2.2.9",
+  version="2.3.0",
   description="Classical Chinese to Modern Japanese Translator",
   long_description=long_description,
   long_description_content_type="text/markdown",
@@ -19,7 +19,7 @@ setuptools.setup(
   license="MIT",
   keywords="udkanbun nlp",
   packages=setuptools.find_packages(),
-  install_requires=["udkanbun>=3.4.2","unidic2ud>=3.0.3"],
+  install_requires=["udkanbun>=3.4.6","unidic2ud>=3.0.7"],
   python_requires=">=3.6",
   package_data={
     "udkundoku":["./server/*.html","./server/*.js"],
